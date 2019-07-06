@@ -560,7 +560,7 @@
                 this.dingpeople();
             },
             exportData() {
-
+                console.log(this.windowScroll())
             },
             changeOperator() {
                 this.dingpeople();
@@ -708,7 +708,7 @@
                     },
                 });
             },
-            getSupervisePersonChargeList: function () {
+            getsuperviseChargeList: function () {
                 return this.$http.post(`/api/ddadapter/openApi/data`, {
                     "code": "5",
                     "data": {
