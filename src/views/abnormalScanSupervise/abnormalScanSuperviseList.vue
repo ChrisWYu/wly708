@@ -298,7 +298,6 @@
                     :total="tableTotal"
                     :page-sizes="pageSizes"
             >
-
                 <div class="routerTo">
                     <el-input
                             class="expandInput routerToInput"
@@ -352,12 +351,10 @@
                 console.log(error);
             });
         },
-        watch: {
-            // currentPage: function () {
-            //     console.log(1234);
-            //     this.getListInfo();
-            // }
+        beforeDestroy() {
+            this.$store.commit('saveSearchData', this.searchData);
         },
+        watch: {},
         computed: {
             userLevel: function () {
                 return sessionStorage.level;
@@ -558,7 +555,6 @@
                 return total;
             },
             searchDataClick: function () {
-                this.$store.commit('saveSearchData', this.searchData);
                 this.currentChange(1);
             },
             clearDataClick: function () {
