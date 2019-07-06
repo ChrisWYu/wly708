@@ -265,7 +265,8 @@
                         label="操作"
                         width="170">
                     <template slot-scope="scope">
-                        <div v-if="userLevel == 'E'|| userLevel == 'B'" class="tableButtons" @click="checkOne(scope.row)"><i
+                        <div v-if="userLevel == 'E'|| userLevel == 'B'" class="tableButtons"
+                             @click="checkOne(scope.row)"><i
                                 class="icon iconfont iconweibiaoti--5"></i>
                             <p>核查</p></div>
                         <div v-if="userLevel == 'DE'" style="margin-left: 18px;" class="tableButtons"
@@ -311,8 +312,8 @@
             _this.loadingShow();
             this.$http.all([this.getAbnormalLargeCategoryList(), this.getAbnormalDetailList(), this.getCodeSourceDistributorList(), this.getCodeSourceWarList(), this.getCodeSourceChannelList(), this.getScanOutDistributorList(), this.getScanOutWarList(), this.getScanOutChannelList(), this.getDetailList()])
                 .then(this.$http.spread(function (abnormalLargeCategory, abnormalDetail, codeSourceDistributor, codeSourceWar, codeSourceChannel, scanOutDistributor, scanOutWar, scanOutChannel, list) {
-                    _this.tableData = list.data.data;
-                    _this.tableTotal = list.data.count;
+                    _this.tableData = list.data.data.list;
+                    _this.tableTotal = list.data.data.total;
                     _this.abnormalLargeCategoryList = abnormalLargeCategory.data.data;
                     _this.abnormalDetailList = abnormalDetail.data.data;
                     _this.codeSourceDistributorList = codeSourceDistributor.data.data;
@@ -328,14 +329,18 @@
             });
         },
         computed: {
-            abnormalId: function () {
+            expDistributorId: function () {
                 return this.$route.params.id;
             },
             userLevel: function () {
                 return sessionStorage.level;
             },
         },
-        watch: {},
+        watch: {
+            currentChange: function () {
+                this.getListInfo();
+            }
+        },
         data: function () {
             return {
                 checkOneShow: false,
@@ -384,8 +389,8 @@
                 scanOutChannelList: [],
                 /** 查询条件结束 */
                 /** 分页配置开始 */
-                pageSize: 2,
-                pageSizes: [2, 3, 4, 5],
+                pageSize: 10,
+                pageSizes: [10, 15, 20, 50],
                 currentPage: 1,
                 tableTotal: 0,
                 /** 分页配置结束 */
@@ -406,7 +411,7 @@
                 });
             },
             searchData: function () {
-                this.getListInfo();
+                this.currentChange(1);
             },
             clearData: function () {
                 this.logisticsCode = '';
@@ -427,13 +432,6 @@
             handleSelectAll: function (ar) {
 
             },
-            totalAbnormalSituation(e) {
-                let total = 0;
-                for (let i = 0; i < e.length; i++) {
-                    total = e[i].count + total;
-                }
-                return total;
-            },
             superviseOne: function (row) {
                 this.currentData = row;
                 this.superviseOneShow = !this.superviseOneShow;
@@ -445,7 +443,7 @@
             },
             handleSizeChange(val) {
                 this.pageSize = val;
-                this.getListInfo();
+                this.currentChange(1);
             },
             currentChange: function (e) {
                 this.currentPage = e;
@@ -464,7 +462,7 @@
                 return this.$http.post("/api/ddadapter/openApi/data", {
                     "code": "15",
                     "data": {
-                        abnormalId: this.abnormalId,
+                        expDistributorId: this.expDistributorId,
                         userid: sessionStorage.userid
                     }
                 }, {
@@ -477,7 +475,7 @@
                 return this.$http.post("/api/ddadapter/openApi/data", {
                     "code": "15",
                     "data": {
-                        abnormalId: this.abnormalId,
+                        expDistributorId: this.expDistributorId,
                         userid: sessionStorage.userid
                     }
                 }, {
@@ -490,7 +488,7 @@
                 return this.$http.post("/api/ddadapter/openApi/data", {
                     "code": "14",
                     "data": {
-                        abnormalId: this.abnormalId,
+                        expDistributorId: this.expDistributorId,
                         userid: sessionStorage.userid
                     }
                 }, {
@@ -503,7 +501,7 @@
                 return this.$http.post("/api/ddadapter/openApi/data", {
                     "code": "13",
                     "data": {
-                        abnormalId: this.abnormalId,
+                        expDistributorId: this.expDistributorId,
                         userid: sessionStorage.userid
                     }
                 }, {
@@ -516,7 +514,7 @@
                 return this.$http.post("/api/ddadapter/openApi/data", {
                     "code": "12",
                     "data": {
-                        abnormalId: this.abnormalId,
+                        expDistributorId: this.expDistributorId,
                         userid: sessionStorage.userid
                     }
                 }, {
@@ -529,7 +527,7 @@
                 return this.$http.post("/api/ddadapter/openApi/data", {
                     "code": "11",
                     "data": {
-                        abnormalId: this.abnormalId,
+                        expDistributorId: this.expDistributorId,
                         userid: sessionStorage.userid
                     }
                 }, {
@@ -542,7 +540,7 @@
                 return this.$http.post("/api/ddadapter/openApi/data", {
                     "code": "10",
                     "data": {
-                        abnormalId: this.abnormalId,
+                        expDistributorId: this.expDistributorId,
                         userid: sessionStorage.userid
                     }
                 }, {
@@ -555,7 +553,7 @@
                 return this.$http.post("/api/ddadapter/openApi/data", {
                     "code": "8",
                     "data": {
-                        abnormalId: this.abnormalId,
+                        expDistributorId: this.expDistributorId,
                         userid: sessionStorage.userid
                     }
                 }, {
@@ -595,7 +593,7 @@
                             //扫码出库渠道
                             scanOutChannel: this.scanOutChannel,
                             //异常扫码内容id
-                            abnormalId: this.abnormalId
+                            expDistributorId: this.expDistributorId
                         }
                     }, {
                         headers: {

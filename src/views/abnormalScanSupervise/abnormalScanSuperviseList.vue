@@ -238,9 +238,15 @@
                             <template slot="content">
                                 <div slot="content">
                                     <span v-if="scope.row.codeA">{{changeAbnormalStatus('codeA')}} ：{{scope.row.codeA}}</span>
-                                    <span v-if="scope.row.codeB">{{changeAbnormalStatus('codeB')}} ：{{scope.row.codeA}}</span>
-                                    <span v-if="scope.row.codeC">{{changeAbnormalStatus('codeC')}} ：{{scope.row.codeA}}</span>
-                                    <span v-if="scope.row.codeD">{{changeAbnormalStatus('codeD')}} ：{{scope.row.codeA}}</span>
+                                </div>
+                                <div slot="content">
+                                    <span v-if="scope.row.codeB">{{changeAbnormalStatus('codeB')}} ：{{scope.row.codeB}}</span>
+                                </div>
+                                <div slot="content">
+                                    <span v-if="scope.row.codeC">{{changeAbnormalStatus('codeC')}} ：{{scope.row.codeC}}</span>
+                                </div>
+                                <div slot="content">
+                                    <span v-if="scope.row.codeD">{{changeAbnormalStatus('codeD')}} ：{{scope.row.codeD}}</span>
                                 </div>
                             </template>
                             <div class="tableRowDetail">
