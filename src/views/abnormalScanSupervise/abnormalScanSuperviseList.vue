@@ -364,7 +364,7 @@
         watch: {},
         computed: {
             userLevel: function () {
-                return sessionStorage.level;
+                return sessionStorage.roleid;
             },
             pageSize: function () {
                 return this.$store.state[this.searchData.currentRouterName].pageSize;
