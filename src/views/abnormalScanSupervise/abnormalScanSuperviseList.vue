@@ -235,11 +235,16 @@
                         label="异常情况">
                     <template slot-scope="scope">
                         <el-tooltip class="item" effect="dark" placement="top">
-                            <div slot="content" v-for="item in scope.row.abnormalStatus" :key="item.type">
-                                <span>{{item.type}} : {{item.count}}</span>
-                            </div>
+                            <template slot="content">
+                                <div slot="content">
+                                    <span v-if="scope.row.codeA">{{changeAbnormalStatus('codeA')}} ：{{scope.row.codeA}}</span>
+                                    <span v-if="scope.row.codeB">{{changeAbnormalStatus('codeB')}} ：{{scope.row.codeA}}</span>
+                                    <span v-if="scope.row.codeC">{{changeAbnormalStatus('codeC')}} ：{{scope.row.codeA}}</span>
+                                    <span v-if="scope.row.codeD">{{changeAbnormalStatus('codeD')}} ：{{scope.row.codeA}}</span>
+                                </div>
+                            </template>
                             <div class="tableRowDetail">
-                                {{totalAbnormalStatus(scope.row.abnormalStatus)}}
+                                {{totalAbnormalStatusTotal(scope.row)}}
                             </div>
                         </el-tooltip>
                     </template>
@@ -333,8 +338,10 @@
             this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
             this.$http.all([this.getWarCheckList(), this.getWarChargeList(), this.getWarOperatorList(), this.getsuperviseChargeList(), this.getWarBelongList(), this.getDistributorList(), this.getAbnormalSmallCategoryList(), this.getList()])
                 .then(this.$http.spread((war, warCharge, warOperator, superviseCharge, warBelong, distributor, abnormalSmallCategory, list) => {
-                    _this.tableData = list.data.data;
-                    _this.tableTotal = list.data.count;
+                    _this.tableData = list.data.data.list;
+                    _this.tableTotal = list.data.data.total;
+                    console.log(_this.tableData);
+                    console.log(_this.tableTotal);
                     _this.warCheckList = war.data.data;
                     _this.warChargeList = warCharge.data.data;
                     _this.warOperatorList = warOperator.data.data;
@@ -571,12 +578,12 @@
             loadingCancel: function () {
                 this.loadingStatus = false;
             },
-            totalAbnormalStatus(e) {
-                let total = 0;
-                for (let i = 0; i < e.length; i++) {
-                    total = e[i].count + total;
-                }
-                return total;
+            totalAbnormalStatusTotal(e) {
+                return e.codeA + e.codeB + e.codeC + e.codeD;
+            },
+            changeAbnormalStatus(obj) {
+                let codeResult = {codeA: '作业层级异动', codeB: '跨渠道异动', codeC: '跨客户异动', codeD: '跨区域异动'};
+                return codeResult[obj];
             },
             searchDataClick: function () {
                 this.currentChange(1);
@@ -806,7 +813,7 @@
             getListInfo() {
                 this.loadingShow();
                 this.getList().then((res) => {
-                    let tableData = res.data.data;
+                    let tableData = res.data.list;
                     // this.tableData = tableData;
                     // let checkId = JSON.parse(JSON.stringify(this.checkDataId));
                     // let checkData = JSON.parse(JSON.stringify(this.checkData));
@@ -821,7 +828,7 @@
                     //     this.$refs.multipleTable.toggleRowSelection(row,true);
                     // });
                     this.tableData = tableData;
-                    this.tableTotal = res.data.count;
+                    this.tableTotal = res.data.total;
                     // setTimeout(() => {
                     //     currentPageCheck.forEach(row => {
                     //         this.$refs.multipleTable.toggleRowSelection(row, true);

@@ -11,7 +11,8 @@ const state = {
     abnormalScanSuperviseList: {
         pageSize: 10,
         currentPage: 1,
-        searchData: {}
+        searchData: {},
+        scrollY: 0,
     },
 }
 
@@ -26,6 +27,11 @@ const mutations = {
         let currentPage = params.currentPage;
         let module = params.module;
         state[module].currentPage = currentPage;
+    },
+    scrollToY(state, params) {
+        let scrollY = params.scrollY;
+        let module = params.module;
+        state[module].scrollY = scrollY;
     },
     saveSearchData(state, params) {
         state[params['currentRouterName']].searchData = params;
