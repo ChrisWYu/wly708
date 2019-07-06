@@ -6,71 +6,11 @@
         <div class="contentDetail">
             <div class="row">
                 <div class="rowInline">
-                    <p class="title">核查战区</p>
-                    <el-select class="expandSelect" v-model="warValue" placeholder="请选择" :clearable="clearable"
-                               :disabled="userLevel != 'D' && userLevel != 'DE'">
-                        <el-option
-                                v-for="item in warCheckList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-                <div class="rowInline">
-                    <p class="title">战区负责人</p>
-                    <el-select class="expandSelect" v-model="warCharge" placeholder="请选择" :clearable="clearable">
-                        <el-option
-                                v-for="item in warChargeList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-                <div class="rowInline">
-                    <p class="title">战区执行人</p>
-                    <el-select class="expandSelect" v-model="warOperator" placeholder="请选择" :clearable="clearable">
-                        <el-option
-                                v-for="item in warOperatorList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-                <div class="rowInline">
-                    <p class="title">督导负责人</p>
-                    <el-select class="expandSelect" v-model="supervisePersonCharge" placeholder="请选择"
+                    <p class="title">经销商</p>
+                    <el-select class="expandSelect" v-model="searchData.distributor" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
-                                v-for="item in supervisePersonChargeList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="rowInline">
-                    <p class="title">核查情况</p>
-                    <el-select class="expandSelect" v-model="checkStatus" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in checkStatusList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-                <div class="rowInline">
-                    <p class="title">督导情况</p>
-                    <el-select class="expandSelect" v-model="superviseStatus" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in superviseStatusList"
+                                v-for="item in distributorList"
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.id">
@@ -79,7 +19,7 @@
                 </div>
                 <div class="rowInline">
                     <p class="title">所属战区</p>
-                    <el-select class="expandSelect" v-model="warBelong" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="searchData.warBelong" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
                                 v-for="item in warBelongList"
@@ -90,22 +30,8 @@
                     </el-select>
                 </div>
                 <div class="rowInline">
-                    <p class="title">经销商</p>
-                    <el-select class="expandSelect" v-model="distributor" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in distributorList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="rowInline">
                     <p class="title">异常大类</p>
-                    <el-select class="expandSelect" v-model="abnormalLargeCategory" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="searchData.abnormalLargeCategory" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
                                 v-for="item in abnormalLargeCategoryList"
@@ -117,7 +43,7 @@
                 </div>
                 <div class="rowInline">
                     <p class="title">异常小类</p>
-                    <el-select class="expandSelect" v-model="abnormalSmallCategory" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="searchData.abnormalSmallCategory" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
                                 v-for="item in abnormalSmallCategoryList"
@@ -127,27 +53,65 @@
                         </el-option>
                     </el-select>
                 </div>
-                <div class="rowInline dateRange">
-                    <p class="title">创建日期</p>
-                    <el-date-picker
-                            class="expandDate"
-                            v-model="createDate"
-                            type="daterange"
-                            align="right"
-                            unlink-panels
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            :picker-options="pickerOptions">
-                    </el-date-picker>
+            </div>
+            <div class="row">
+                <div class="rowInline">
+                    <p class="title">核查战区</p>
+                    <el-select class="expandSelect" v-model="searchData.warCheck" placeholder="请选择"
+                               :clearable="clearable"
+                               :disabled="userLevel != 'D' && userLevel != 'DE'">
+                        <el-option
+                                v-for="item in warCheckList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div class="rowInline">
+                    <p class="title">战区负责人</p>
+                    <el-select class="expandSelect" v-model="searchData.warCharge" placeholder="请选择"
+                               :clearable="clearable">
+                        <el-option
+                                v-for="item in warChargeList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div class="rowInline">
+                    <p class="title">战区执行人</p>
+                    <el-select class="expandSelect" v-model="searchData.warOperator" placeholder="请选择"
+                               :clearable="clearable">
+                        <el-option
+                                v-for="item in warOperatorList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+
+                <div class="rowInline">
+                    <p class="title">核查情况</p>
+                    <el-select class="expandSelect" v-model="searchData.checkStatus" placeholder="请选择"
+                               :clearable="clearable">
+                        <el-option
+                                v-for="item in checkStatusList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
                 </div>
             </div>
             <div class="row">
                 <div class="rowInline dateRange">
-                    <p class="title">截止日期</p>
+                    <p class="title">创建日期</p>
                     <el-date-picker
                             class="expandDate"
-                            v-model="endDate"
+                            v-model="searchData.createDate"
                             type="daterange"
                             align="right"
                             unlink-panels
@@ -161,7 +125,7 @@
                     <p class="title">分派日期</p>
                     <el-date-picker
                             class="expandDate"
-                            v-model="assignDate"
+                            v-model="searchData.assignDate"
                             type="daterange"
                             align="right"
                             unlink-panels
@@ -171,9 +135,49 @@
                             :picker-options="pickerOptions">
                     </el-date-picker>
                 </div>
+                <div class="rowInline dateRange">
+                    <p class="title">截止日期</p>
+                    <el-date-picker
+                            class="expandDate"
+                            v-model="searchData.endDate"
+                            type="daterange"
+                            align="right"
+                            unlink-panels
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            :picker-options="pickerOptions">
+                    </el-date-picker>
+                </div>
+            </div>
+            <div class="row">
+                <div class="rowInline">
+                    <p class="title">督导负责人</p>
+                    <el-select class="expandSelect" v-model="searchData.supervisePersonCharge" placeholder="请选择"
+                               :clearable="clearable">
+                        <el-option
+                                v-for="item in supervisePersonChargeList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div class="rowInline">
+                    <p class="title">督导情况</p>
+                    <el-select class="expandSelect" v-model="searchData.superviseStatus" placeholder="请选择"
+                               :clearable="clearable">
+                        <el-option
+                                v-for="item in superviseStatusList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
                 <div class="rowInline buttonOperate" style="white-space: nowrap;">
-                    <div class="cusButton cusRed" @click="searchData">查询</div>
-                    <div class="cusButton cusWhite" @click="clearData" style="margin-left: 20px;">重置</div>
+                    <div class="cusButton cusRed" @click="searchDataClick">查询</div>
+                    <div class="cusButton cusWhite" @click="clearDataClick" style="margin-left: 20px;">重置</div>
                 </div>
             </div>
             <hr style="margin-top: 10px; height:2px;border:none;border-top:2px dotted rgb(238,238,238);"/>
@@ -323,12 +327,12 @@
         mounted() {
             this.loadingShow();
             if (this.userLevel != 'D' && this.userLevel != 'DE') {
-                this.warValue = sessionStorage.warcode;
+                this.searchData.warCheck = sessionStorage.warcode;
             }
             this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
             let _this = this;
-            this.$http.all([this.getWarCheckList(), this.getWarChargeList(), this.getWarOperatorList(), this.getSupervisePersonChargeList(), this.getWarBelongList(), this.getDistributorList(), this.getAbnormalLargeCategoryList(), this.getAbnormalSmallCategoryList(), this.getList()])
-                .then(this.$http.spread((war, warCharge, warOperator, supervisePersonCharge, warBelong, distributor, abnormalLargeCategory, abnormalSmallCategory, list) => {
+            this.$http.all([this.getWarCheckList(), this.getWarChargeList(), this.getWarOperatorList(), this.getSupervisePersonChargeList(), this.getWarBelongList(), this.getDistributorList(), this.getAbnormalSmallCategoryList(), this.getList()])
+                .then(this.$http.spread((war, warCharge, warOperator, supervisePersonCharge, warBelong, distributor, abnormalSmallCategory, list) => {
                     _this.tableData = list.data.data;
                     _this.tableTotal = list.data.count;
                     _this.warCheckList = war.data.data;
@@ -337,8 +341,11 @@
                     _this.supervisePersonChargeList = supervisePersonCharge.data.data;
                     _this.warBelongList = warBelong.data.data;
                     _this.distributorList = distributor.data.data;
-                    _this.abnormalLargeCategoryList = abnormalLargeCategory.data.data;
                     _this.abnormalSmallCategoryList = abnormalSmallCategory.data.data;
+                    let searchData = _this.$store.state[_this.searchData.currentRouterName].searchData;
+                    for (let key in searchData) {
+                        this.searchData[key] = searchData[key];
+                    }
                     _this.loadingCancel();
                     // 两个请求现在都执行完成
                 })).catch(function (error) {
@@ -346,13 +353,20 @@
             });
         },
         watch: {
-            currentPage: function () {
-                this.getListInfo();
-            }
+            // currentPage: function () {
+            //     console.log(1234);
+            //     this.getListInfo();
+            // }
         },
         computed: {
             userLevel: function () {
-                return sessionStorage.roleid;
+                return sessionStorage.level;
+            },
+            pageSize: function () {
+                return this.$store.state[this.searchData.currentRouterName].pageSize;
+            },
+            currentPage: function () {
+                return this.$store.state[this.searchData.currentRouterName].currentPage;
             }
         },
         data: function () {
@@ -360,16 +374,27 @@
                 loadingStatus: false,
                 buttonControl: {},
                 /** 查询条件开始 */
+                searchData: {
+                    currentRouterName: JSON.parse(JSON.stringify(this.$route.name)),
+                    warCheck: '',
+                    warCharge: '',
+                    warOperator: '',
+                    supervisePersonCharge: '',
+                    checkStatus: '',
+                    superviseStatus: '',
+                    warBelong: '',
+                    distributor: '',
+                    abnormalLargeCategory: '',
+                    abnormalSmallCategory: '',
+                    createDate: [],
+                    assignDate: [],
+                    endDate: [],
+                },
                 clearable: true,
-                warValue: '',
                 warCheckList: [],
-                warCharge: '',
                 warChargeList: [],
-                warOperator: '',
                 warOperatorList: [],
-                supervisePersonCharge: '',
                 supervisePersonChargeList: [],
-                checkStatus: '',
                 checkStatusList: [
                     {
                         id: '1',
@@ -396,7 +421,6 @@
                         name: '未完成'
                     }
                 ],
-                superviseStatus: '',
                 superviseStatusList: [
                     {
                         id: '1',
@@ -411,11 +435,8 @@
                         name: '全部反馈',
                     }
                 ],
-                warBelong: '',
                 warBelongList: [],
-                distributor: '',
                 distributorList: [],
-                abnormalLargeCategory: '',
                 abnormalLargeCategoryList: [
                     {
                         id: 'A',
@@ -434,11 +455,7 @@
                         name: '跨区域异动',
                     }
                 ],
-                abnormalSmallCategory: '',
                 abnormalSmallCategoryList: [],
-                createDate: [],
-                assignDate: [],
-                endDate: [],
                 pickerOptions: {
                     shortcuts: [{
                         text: '最近一周',
@@ -468,9 +485,7 @@
                 },
                 /** 查询条件结束 */
                 /** 分页配置开始 */
-                pageSize: 10,
                 pageSizes: [10, 15, 20, 50],
-                currentPage: 1,
                 tableTotal: 0,
                 routerToNum: 1,
                 /** 分页配置结束 */
@@ -521,9 +536,7 @@
                 this.dingpeople();
             },
             appointOperator() {
-                console.log(123);
                 this.dingpeople();
-                // this.appointOperatorShow = !this.appointOperatorShow;
             },
             exportData() {
 
@@ -544,29 +557,32 @@
                 }
                 return total;
             },
-            searchData: function () {
-                this.getListInfo();
+            searchDataClick: function () {
+                this.$store.commit('saveSearchData', this.searchData);
+                this.currentChange(1);
             },
-            clearData: function () {
+            clearDataClick: function () {
                 if (this.userLevel == 'D' || this.userLevel == 'DE') {
-                    this.warValue = '';
+                    this.searchData.warCheck = '';
                 }
-                this.warList = [];
-                this.warCharge = '';
-                this.warOperator = '';
-                this.supervisePersonCharge = '';
-                this.checkStatus = '';
-                this.superviseStatus = '';
-                this.warBelong = '';
-                this.distributor = '';
-                this.abnormalLargeCategory = '';
-                this.abnormalSmallCategory = '';
-                this.createDate = [];
-                this.assignDate = [];
-                this.endDate = [];
+                this.searchData.warCharge = '';
+                this.searchData.warOperator = '';
+                this.searchData.supervisePersonCharge = '';
+                this.searchData.checkStatus = '';
+                this.searchData.superviseStatus = '';
+                this.searchData.warBelong = '';
+                this.searchData.distributor = '';
+                this.searchData.abnormalLargeCategory = '';
+                this.searchData.abnormalSmallCategory = '';
+                this.searchData.createDate = [];
+                this.searchData.assignDate = [];
+                this.searchData.endDate = [];
             },
             handleRouterTo: function () {
-                this.currentPage = JSON.parse(JSON.stringify(this.routerToNum))
+                this.$store.commit('changeCurrentPage', {
+                    module: this.searchData.currentRouterName,
+                    currentPage: JSON.parse(JSON.stringify(this.routerToNum))
+                });
             },
             blurRouterTo: function () {
                 let routeToNum = this.routerToNum;
@@ -597,11 +613,17 @@
                 );
             },
             handleSizeChange(val) {
-                this.pageSize = val;
-                this.getListInfo();
+                this.$store.commit('changePageSize', {
+                    module: this.searchData.currentRouterName,
+                    pageSize: val
+                });
+                this.currentChange(1);
             },
-            currentChange: function (e) {
-                this.currentPage = e;
+            currentChange: function (val) {
+                this.$store.commit('changeCurrentPage', {
+                    module: this.searchData.currentRouterName,
+                    currentPage: val
+                });
                 this.getListInfo();
             },
             handleSelectOne: function (ar, ob) {
@@ -726,31 +748,31 @@
                             //每页条数
                             pageSize: this.pageSize,
                             //核查战区
-                            warCheck: this.warValue,
+                            warCheck: this.searchData.warCheck,
                             //战区负责人
-                            warCharge: this.warCharge,
+                            warCharge: this.searchData.warCharge,
                             //战区执行人
-                            warOperator: this.warOperator,
+                            warOperator: this.searchData.warOperator,
                             //督导负责人
-                            supervisePersonCharge: this.supervisePersonCharge,
+                            supervisePersonCharge: this.searchData.supervisePersonCharge,
                             //核查情况
-                            checkStatus: this.checkStatus,
+                            checkStatus: this.searchData.checkStatus,
                             //督导情况
-                            superviseStatus: this.superviseStatus,
+                            superviseStatus: this.searchData.superviseStatus,
                             //所属战区
-                            warBelong: this.warBelong,
+                            warBelong: this.searchData.warBelong,
                             //经销商
-                            distributor: this.distributor,
+                            distributor: this.searchData.distributor,
                             //异常大类
-                            abnormalLargeCategory: this.abnormalLargeCategory,
+                            abnormalLargeCategory: this.searchData.abnormalLargeCategory,
                             //异常小类
-                            abnormalSmallCategory: this.abnormalSmallCategory,
+                            abnormalSmallCategory: this.searchData.abnormalSmallCategory,
                             //创建日期
-                            createDate: this.createDate,
+                            createDate: this.searchData.createDate,
                             //分派日期
-                            assignDate: this.assignDate,
+                            assignDate: this.searchData.assignDate,
                             //截止日期
-                            endDate: this.endDate,
+                            endDate: this.searchData.endDate,
                             //用户id
                             userid: sessionStorage.userid
                         }
