@@ -265,10 +265,11 @@
                         label="操作"
                         width="170">
                     <template slot-scope="scope">
-                        <div class="tableButtons" @click="checkOne(scope.row)"><i
+                        <div v-if="userLevel == 'E'|| userLevel == 'B'" class="tableButtons" @click="checkOne(scope.row)"><i
                                 class="icon iconfont iconweibiaoti--5"></i>
                             <p>核查</p></div>
-                        <div style="margin-left: 18px;" class="tableButtons" @click="superviseOne(scope.row)"><i
+                        <div v-if="userLevel == 'DE'" style="margin-left: 18px;" class="tableButtons"
+                             @click="superviseOne(scope.row)"><i
                                 class="icon iconfont iconweibiaoti--6"></i>
                             <p>督导</p></div>
                     </template>
@@ -329,7 +330,10 @@
         computed: {
             abnormalId: function () {
                 return this.$route.params.id;
-            }
+            },
+            userLevel: function () {
+                return sessionStorage.level;
+            },
         },
         watch: {},
         data: function () {
