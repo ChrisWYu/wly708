@@ -153,10 +153,10 @@
             <div class="row">
                 <div class="rowInline">
                     <p class="title">督导负责人</p>
-                    <el-select class="expandSelect" v-model="searchData.supervisePersonCharge" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="searchData.superviseCharge" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
-                                v-for="item in supervisePersonChargeList"
+                                v-for="item in superviseChargeList"
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.id">
@@ -278,7 +278,7 @@
                 <el-table-column
                         show-overflow-tooltip
                         width="125"
-                        prop="supervisePersonCharge"
+                        prop="superviseCharge"
                         label="督导负责人">
                 </el-table-column>
                 <el-table-column
@@ -317,6 +317,7 @@
 
 <script>
     import {powerControlLib} from '../../assets/lib/powerControl'
+    import {EventUtil} from '../../assets/lib/util'
     import loading from '../common/loading'
 
     export default {
@@ -324,28 +325,33 @@
             loading
         },
         mounted() {
+            let _this = this;
+            EventUtil.add(window, 'scroll', this.windowScroll);
             this.loadingShow();
             if (this.userLevel != 'D' && this.userLevel != 'DE') {
                 this.searchData.warCheck = sessionStorage.warcode;
             }
             this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
-            let _this = this;
-            this.$http.all([this.getWarCheckList(), this.getWarChargeList(), this.getWarOperatorList(), this.getSupervisePersonChargeList(), this.getWarBelongList(), this.getDistributorList(), this.getAbnormalSmallCategoryList(), this.getList()])
-                .then(this.$http.spread((war, warCharge, warOperator, supervisePersonCharge, warBelong, distributor, abnormalSmallCategory, list) => {
+            this.$http.all([this.getWarCheckList(), this.getWarChargeList(), this.getWarOperatorList(), this.getsuperviseChargeList(), this.getWarBelongList(), this.getDistributorList(), this.getAbnormalSmallCategoryList(), this.getList()])
+                .then(this.$http.spread((war, warCharge, warOperator, superviseCharge, warBelong, distributor, abnormalSmallCategory, list) => {
                     _this.tableData = list.data.data;
                     _this.tableTotal = list.data.count;
                     _this.warCheckList = war.data.data;
                     _this.warChargeList = warCharge.data.data;
                     _this.warOperatorList = warOperator.data.data;
-                    _this.supervisePersonChargeList = supervisePersonCharge.data.data;
+                    _this.superviseChargeList = superviseCharge.data.data;
                     _this.warBelongList = warBelong.data.data;
                     _this.distributorList = distributor.data.data;
                     _this.abnormalSmallCategoryList = abnormalSmallCategory.data.data;
                     let searchData = _this.$store.state[_this.searchData.currentRouterName].searchData;
-                    for (let key in searchData) {
-                        this.searchData[key] = searchData[key];
-                    }
-                    _this.loadingCancel();
+                    let scrollY = _this.$store.state[_this.searchData.currentRouterName].scrollY;
+                    setTimeout(function () {
+                        for (let key in searchData) {
+                            _this.searchData[key] = searchData[key];
+                        }
+                        _this.scrollToHistory(scrollY);
+                        _this.loadingCancel();
+                    }, 500);
                     // 两个请求现在都执行完成
                 })).catch(function (error) {
                 console.log(error);
@@ -353,6 +359,8 @@
         },
         beforeDestroy() {
             this.$store.commit('saveSearchData', this.searchData);
+            this.$store.commit('scrollToY', {module: this.searchData.currentRouterName, scrollY: this.scrollInfo['y']});
+            EventUtil.remove(window, 'scroll', this.windowScroll);
         },
         watch: {},
         computed: {
@@ -370,13 +378,14 @@
             return {
                 loadingStatus: false,
                 buttonControl: {},
+                scrollInfo: {},
                 /** 查询条件开始 */
                 searchData: {
                     currentRouterName: JSON.parse(JSON.stringify(this.$route.name)),
                     warCheck: '',
                     warCharge: '',
                     warOperator: '',
-                    supervisePersonCharge: '',
+                    superviseCharge: '',
                     checkStatus: '',
                     superviseStatus: '',
                     warBelong: '',
@@ -391,7 +400,7 @@
                 warCheckList: [],
                 warChargeList: [],
                 warOperatorList: [],
-                supervisePersonChargeList: [],
+                superviseChargeList: [],
                 checkStatusList: [
                     {
                         id: '1',
@@ -493,6 +502,22 @@
             }
         },
         methods: {
+            windowScroll: function () {
+                if (window.pageXOffset) {
+                    this.scrollInfo = {
+                        x: window.pageXOffset,
+                        y: window.pageYOffset
+                    }
+                } else {
+                    this.scrollInfo = {
+                        x: document.body.scrollLeft + document.documentElement.scrollLeft,
+                        y: document.body.scrollTop + document.documentElement.scrollTop
+                    }
+                }
+            },
+            scrollToHistory: function (y) {
+                document.documentElement.scrollTop = y;
+            },
             //钉钉选人
             dingpeople: function () {
                 var t = this;
@@ -542,7 +567,7 @@
                 this.dingpeople();
             },
             loadingShow: function () {
-                // this.loadingStatus = true;
+                this.loadingStatus = true;
             },
             loadingCancel: function () {
                 this.loadingStatus = false;
@@ -563,7 +588,7 @@
                 }
                 this.searchData.warCharge = '';
                 this.searchData.warOperator = '';
-                this.searchData.supervisePersonCharge = '';
+                this.searchData.superviseCharge = '';
                 this.searchData.checkStatus = '';
                 this.searchData.superviseStatus = '';
                 this.searchData.warBelong = '';
@@ -750,7 +775,7 @@
                             //战区执行人
                             warOperator: this.searchData.warOperator,
                             //督导负责人
-                            supervisePersonCharge: this.searchData.supervisePersonCharge,
+                            superviseCharge: this.searchData.superviseCharge,
                             //核查情况
                             checkStatus: this.searchData.checkStatus,
                             //督导情况

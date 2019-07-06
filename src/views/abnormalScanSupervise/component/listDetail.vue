@@ -245,7 +245,7 @@
                 <el-table-column
                         show-overflow-tooltip
                         width="125"
-                        prop="supervisePersonCharge"
+                        prop="superviseCharge"
                         label="督导负责人">
                 </el-table-column>
                 <el-table-column
