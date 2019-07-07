@@ -61,11 +61,9 @@
             confirm() {
                 this.loadingShow();
                 let data = {
-                    'describe': this.describe,
-                    'date': this.date,
+                    'warValue': this.warValue,
                 };
-                this.$http.post(`/node/user/test`, {
-                        //return this.$http.post("/api/ddadapter/openApi/data", {
+                return this.$http.post("/api/ddadapter/openApi/data", {
                         "code": "18",
                         "data": data
                     }, {
@@ -77,8 +75,6 @@
                     let way = Number(res.data.code) === 200 ? 'success' : 'error';
                     this.messagePrompt(way, res.data.msg)
                 }, error => {
-                    console.log(error);
-                }).catch(err => {
                     this.loadingCancel();
                 })
             }
