@@ -3,19 +3,16 @@
         <!--<div class="contentTitle">-->
         <!--异常扫码稽查-->
         <!--</div>-->
+        <div v-show="loadd"
+             style="position:fixed;width: 100%;height: 100%;top:0;bottom:0;left:0;right:0;background:#000;opacity:0.7;z-index: 9999;"></div>
         <div class="contentDetail">
             <div class="row">
                 <div class="rowInline">
                     <p class="title">经销商</p>
-                    <el-select class="expandSelect" v-model="searchData.distributor" placeholder="请选择"
+                    <el-input v-model="searchData.distributor" placeholder="请输入经销商名称"></el-input>
+                    <!-- <el-select class="expandSelect" v-model="searchData.distributor" placeholder="请选择"
                                :clearable="clearable">
-                        <el-option
-                                v-for="item in distributorList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
+                    </el-select> -->
                 </div>
                 <div class="rowInline">
                     <p class="title">所属战区</p>
@@ -23,16 +20,16 @@
                                :clearable="clearable">
                         <el-option
                                 v-for="item in warBelongList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
+                                :key="item.war_code"
+                                :label="item.war_name"
+                                :value="item.war_code">
                         </el-option>
                     </el-select>
                 </div>
                 <div class="rowInline">
                     <p class="title">异常大类</p>
                     <el-select class="expandSelect" v-model="searchData.abnormalLargeCategory" placeholder="请选择"
-                               :clearable="clearable">
+                               :clearable="clearable" @change="getAbnormalSmallCategoryList">
                         <el-option
                                 v-for="item in abnormalLargeCategoryList"
                                 :key="item.id"
@@ -47,9 +44,9 @@
                                :clearable="clearable">
                         <el-option
                                 v-for="item in abnormalSmallCategoryList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
+                                :key="item.abnormal_detail_code"
+                                :label="item.abnormal_detail_name"
+                                :value="item.abnormal_detail_code">
                         </el-option>
                     </el-select>
                 </div>
@@ -62,9 +59,9 @@
                                :disabled="userLevel != 'D' && userLevel != 'DE'">
                         <el-option
                                 v-for="item in warCheckList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
+                                :key="item.war_code"
+                                :label="item.war_name"
+                                :value="item.war_code">
                         </el-option>
                     </el-select>
                 </div>
@@ -191,7 +188,10 @@
                 <div v-if="buttonControl.operatorAssignShow" class="cusButton cusWhite operateButton"
                      @click="appointOperator">指派执行人
                 </div>
-                <div v-if="buttonControl.exportDataShow" class="cusButton cusWhite operateButton" @click="exportData">
+                <!-- <div v-if="buttonControl.exportDataShow" class="cusButton cusWhite operateButton" @click="exportData">
+                    导出数据
+                </div> -->
+                <div v-if='false' class="cusButton cusWhite operateButton" @click="exportData">
                     导出数据
                 </div>
                 <div v-if="buttonControl.changeOperatorShow" class="cusButton cusWhite operateButton"
@@ -230,7 +230,7 @@
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
-                        width="105"
+                        width="115"
                         align="center"
                         label="异常情况">
                     <template slot-scope="scope">
@@ -321,6 +321,19 @@
                 </div>
             </el-pagination>
         </div>
+        <!-- 战区弹出 -->
+        <div v-show="sokok" class="Selection">
+            <div>请选择要分派的战区</div>
+            <el-radio-group v-model="zhanqufenpai">
+                <el-radio class="Selection-radio" v-for="item in warCheckList" :key="item.war_code"
+                          :label="item.war_code">{{item.war_name}}
+                </el-radio>
+            </el-radio-group>
+            <el-row style="position:absolute;bottom:50px;right: 50px;">
+                <el-button @click="onNo" style="margin-right:20px;">取消</el-button>
+                <el-button @click="onOK">确认</el-button>
+            </el-row>
+        </div>
         <loading v-if="loadingStatus" v-model="loadingStatus"></loading>
     </div>
 </template>
@@ -342,19 +355,16 @@
                 this.searchData.warCheck = sessionStorage.warcode;
             }
             this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
-            this.$http.all([this.getWarCheckList(), this.getWarChargeList(), this.getWarOperatorList(), this.getsuperviseChargeList(), this.getWarBelongList(), this.getDistributorList(), this.getAbnormalSmallCategoryList(), this.getList()])
-                .then(this.$http.spread((war, warCharge, warOperator, superviseCharge, warBelong, distributor, abnormalSmallCategory, list) => {
+            this.$http.all([this.getWarCheckList(), this.getWarChargeList(), this.getWarOperatorList(), this.getsuperviseChargeList(), this.getWarBelongList(), this.getDistributorList(), this.getList()])
+                .then(this.$http.spread((war, warCharge, warOperator, superviseCharge, warBelong, distributor, list) => {
                     _this.tableData = list.data.data.list;
                     _this.tableTotal = list.data.data.total;
-                    console.log(_this.tableData);
-                    console.log(_this.tableTotal);
                     _this.warCheckList = war.data.data;
                     _this.warChargeList = warCharge.data.data;
                     _this.warOperatorList = warOperator.data.data;
                     _this.superviseChargeList = superviseCharge.data.data;
                     _this.warBelongList = warBelong.data.data;
                     _this.distributorList = distributor.data.data;
-                    _this.abnormalSmallCategoryList = abnormalSmallCategory.data.data;
                     let searchData = _this.$store.state[_this.searchData.currentRouterName].searchData;
                     let scrollY = _this.$store.state[_this.searchData.currentRouterName].scrollY;
                     setTimeout(function () {
@@ -388,6 +398,9 @@
         },
         data: function () {
             return {
+                loadd: false,//遮罩层
+                sokok: false,//弹出战区选择
+                zhanqufenpai: "",//战区分派的值
                 loadingStatus: false,
                 buttonControl: {},
                 scrollInfo: {},
@@ -514,6 +527,16 @@
             }
         },
         methods: {
+            // 战区弹出框同意
+            onOK: function () {
+                this.sokok = false;
+                this.loadd = false;
+            },
+            // 战区弹出框取消
+            onNo: function () {
+                this.sokok = false;
+                this.loadd = false;
+            },
             windowScroll: function () {
                 if (window.pageXOffset) {
                     this.scrollInfo = {
@@ -550,7 +573,7 @@
                     responseUserOnly: true,        //返回人，或者返回人和部门
                     startWithDepartmentId: -1,   //仅支持0和-1
                     onSuccess: function (result) {
-                        console.log(result);
+
                         // console.log(result.users[0])
                         // //emplId,name
                         // t.empname = result.users[0].name;
@@ -564,7 +587,10 @@
                 });
             },
             warAssignClick() {
-                this.dingpeople();
+                // 战区分派
+                // this.dingpeople();
+                this.sokok = true;
+                this.loadd = true;
             },
             superviseAssignClick() {
                 this.dingpeople();
@@ -612,10 +638,12 @@
                 this.searchData.endDate = [];
             },
             handleRouterTo: function () {
+                let routerToNum = JSON.parse(JSON.stringify(this.routerToNum));
                 this.$store.commit('changeCurrentPage', {
                     module: this.searchData.currentRouterName,
-                    currentPage: JSON.parse(JSON.stringify(this.routerToNum))
+                    currentPage: routerToNum
                 });
+                this.currentChange(routerToNum);
             },
             blurRouterTo: function () {
                 let routeToNum = this.routerToNum;
@@ -673,7 +701,19 @@
 
             },
             /** 数据请求开始 */
-            getAbnormalSmallCategoryList: function () {
+            // getAbnormalSmallCategoryList: function () {
+            //     return this.$http.post(`/api/ddadapter/openApi/data`, {
+            //         "code": "8",
+            //         "data": {
+            //             userid: sessionStorage.userid
+            //         }
+            //     }, {
+            //         headers: {
+            //             'content-type': 'application/json',
+            //         },
+            //     });
+            // },
+            getAbnormalLargeCategoryList: function () {
                 return this.$http.post(`/api/ddadapter/openApi/data`, {
                     "code": "9",
                     "data": {
@@ -685,16 +725,18 @@
                     },
                 });
             },
-            getAbnormalLargeCategoryList: function () {
-                return this.$http.post(`/api/ddadapter/openApi/data`, {
-                    "code": "8",
+            getAbnormalSmallCategoryList: function () {
+                this.$http.post(`/api/ddadapter/openApi/data`, {
+                    "code": "00711ZI05",
                     "data": {
-                        userid: sessionStorage.userid
+                        abnormal_type: this.searchData.abnormalLargeCategory
                     }
                 }, {
                     headers: {
                         'content-type': 'application/json',
                     },
+                }).then(res => {
+                    this.abnormalSmallCategoryList = res.data.data;
                 });
             },
             getDistributorList: function () {
@@ -711,7 +753,7 @@
             },
             getWarBelongList: function () {
                 return this.$http.post(`/api/ddadapter/openApi/data`, {
-                    "code": "6",
+                    "code": "00711ZI03",
                     "data": {
                         userid: sessionStorage.userid
                     }
@@ -748,7 +790,7 @@
             },
             getWarCheckList: function () {
                 return this.$http.post(`/api/ddadapter/openApi/data`, {
-                    "code": "1",
+                    "code": "00711ZI03",
                     "data": {
                         userid: sessionStorage.userid
                     }
@@ -819,7 +861,8 @@
             getListInfo() {
                 this.loadingShow();
                 this.getList().then((res) => {
-                    let tableData = res.data.list;
+                    let tableData = res.data.data.list;
+                    console.log(tableData);
                     // this.tableData = tableData;
                     // let checkId = JSON.parse(JSON.stringify(this.checkDataId));
                     // let checkData = JSON.parse(JSON.stringify(this.checkData));
@@ -834,7 +877,7 @@
                     //     this.$refs.multipleTable.toggleRowSelection(row,true);
                     // });
                     this.tableData = tableData;
-                    this.tableTotal = res.data.total;
+                    this.tableTotal = res.data.data.total;
                     // setTimeout(() => {
                     //     currentPageCheck.forEach(row => {
                     //         this.$refs.multipleTable.toggleRowSelection(row, true);

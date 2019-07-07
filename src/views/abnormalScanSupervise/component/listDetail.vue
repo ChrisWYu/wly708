@@ -220,7 +220,7 @@
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
-                        width="125"
+                        width="400"
                         prop="abnormalDetail"
                         label="异常明细">
                 </el-table-column>
@@ -280,12 +280,23 @@
                     hide-on-single-page
                     @size-change="handleSizeChange"
                     @current-change="currentChange"
-                    layout="total, sizes, prev, pager, next, jumper"
+                    layout="total, sizes, prev, pager, next, slot"
                     :page-size="pageSize"
                     :current-page="currentPage"
                     :total="tableTotal"
                     :page-sizes="pageSizes"
             >
+                <div class="routerTo">
+                    <el-input
+                            class="expandInput routerToInput"
+                            v-model="routerToNum"
+                            @blur="blurRouterTo()"
+                    >
+                    </el-input>
+                    <div class="routerToButton" @click="handleRouterTo()">
+                        GO
+                    </div>
+                </div>
             </el-pagination>
             <div class="row" style="text-align: center;">
                 <div class="cusButton cusWhite" @click="backTolast()">返回</div>
@@ -389,10 +400,11 @@
                 scanOutChannelList: [],
                 /** 查询条件结束 */
                 /** 分页配置开始 */
-                pageSize: 10,
+                pageSize: 1,
                 pageSizes: [10, 15, 20, 50],
                 currentPage: 1,
                 tableTotal: 0,
+                routerToNum: 1,
                 /** 分页配置结束 */
                 currentData: {},
                 tableData: []
@@ -449,12 +461,33 @@
                 this.currentPage = e;
                 this.getListInfo();
             },
+            handleRouterTo: function () {
+                this.currentChange(JSON.parse(JSON.stringify(this.routerToNum)));
+            },
+            blurRouterTo: function () {
+                let routeToNum = this.routerToNum;
+                let num = parseInt(routeToNum, 10);
+                let pageSize = this.pageSize;
+                let tableTotal = this.tableTotal;
+                let max = Math.ceil(tableTotal / pageSize);
+                let result = 1;
+                if (!isNaN(num)) {
+                    if (num > 1) {
+                        if (num > max) {
+                            result = max;
+                        } else {
+                            result = num;
+                        }
+                    }
+                }
+                this.routerToNum = result;
+            },
             /** 数据请求开始 */
             getListInfo() {
                 this.loadingShow();
                 this.getDetailList().then((res) => {
-                    this.tableData = res.data.data;
-                    this.tableTotal = res.data.count;
+                    this.tableData = res.data.data.list;
+                    this.tableTotal = res.data.data.total;
                     this.loadingCancel();
                 });
             },
