@@ -60,6 +60,11 @@
             },
             confirm() {
                 this.loadingShow();
+                let warValue = this.warValue;
+                if (warValue === '') {
+                    this.messagePrompt('warning', '请选择分派战区！');
+                    return;
+                }
                 let data = {
                     'warValue': this.warValue,
                 };
