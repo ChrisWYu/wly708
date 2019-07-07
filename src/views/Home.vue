@@ -234,24 +234,6 @@
         border-bottom-right-radius: 4px;
     }
 
-     .Selection {
-         padding: 20px;
-        position: fixed;
-        z-index: 99999;
-        top: calc(50% - 250px);
-        left: calc(50% - 450px);
-        width: 900px;
-        height: 500px;
-        border: 1px solid #C80512;
-        background: #ffffff;
-    }
-
-    .Selection-radio{
-        float: left;
-        width: 16%;
-        margin-top: 5%;
-    }
-
     .el-pagination .routerTo .routerToInput {
         width: 36px;
         height: 28px;

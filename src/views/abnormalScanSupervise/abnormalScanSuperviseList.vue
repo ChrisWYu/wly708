@@ -3,8 +3,6 @@
         <!--<div class="contentTitle">-->
         <!--异常扫码稽查-->
         <!--</div>-->
-        <div v-show="loadd"
-             style="position:fixed;width: 100%;height: 100%;top:0;bottom:0;left:0;right:0;background:#000;opacity:0.7;z-index: 9999;"></div>
         <div class="contentDetail">
             <div class="row">
                 <div class="rowInline">
@@ -321,20 +319,8 @@
                 </div>
             </el-pagination>
         </div>
-        <!-- 战区弹出 -->
-        <div v-show="sokok" class="Selection">
-            <div>请选择要分派的战区</div>
-            <el-radio-group v-model="zhanqufenpai">
-                <el-radio class="Selection-radio" v-for="item in warCheckList" :key="item.war_code"
-                          :label="item.war_code">{{item.war_name}}
-                </el-radio>
-            </el-radio-group>
-            <el-row style="position:absolute;bottom:50px;right: 50px;">
-                <el-button @click="onNo" style="margin-right:20px;">取消</el-button>
-                <el-button @click="onOK">确认</el-button>
-            </el-row>
-        </div>
         <loading v-if="loadingStatus" v-model="loadingStatus"></loading>
+        <warAssign v-if="warAssignShow" v-model="warAssignShow" :warCheckList="warCheckList"></warAssign>
     </div>
 </template>
 
@@ -342,10 +328,12 @@
     import {powerControlLib} from '../../assets/lib/powerControl'
     import {EventUtil} from '../../assets/lib/util'
     import loading from '../common/loading'
+    import warAssign from './component/warAssign'
 
     export default {
         components: {
-            loading
+            loading,
+            warAssign
         },
         mounted() {
             let _this = this;
@@ -398,10 +386,8 @@
         },
         data: function () {
             return {
-                loadd: false,//遮罩层
-                sokok: false,//弹出战区选择
-                zhanqufenpai: "",//战区分派的值
                 loadingStatus: false,
+                warAssignShow: '',
                 buttonControl: {},
                 scrollInfo: {},
                 /** 查询条件开始 */
@@ -527,16 +513,6 @@
             }
         },
         methods: {
-            // 战区弹出框同意
-            onOK: function () {
-                this.sokok = false;
-                this.loadd = false;
-            },
-            // 战区弹出框取消
-            onNo: function () {
-                this.sokok = false;
-                this.loadd = false;
-            },
             windowScroll: function () {
                 if (window.pageXOffset) {
                     this.scrollInfo = {
@@ -588,9 +564,7 @@
             },
             warAssignClick() {
                 // 战区分派
-                // this.dingpeople();
-                this.sokok = true;
-                this.loadd = true;
+                this.warAssignShow = !this.warAssignShow;
             },
             superviseAssignClick() {
                 this.dingpeople();

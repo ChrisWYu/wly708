@@ -400,7 +400,7 @@
                 scanOutChannelList: [],
                 /** 查询条件结束 */
                 /** 分页配置开始 */
-                pageSize: 1,
+                pageSize: 10,
                 pageSizes: [10, 15, 20, 50],
                 currentPage: 1,
                 tableTotal: 0,
