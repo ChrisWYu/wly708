@@ -73,7 +73,7 @@
                 </div>
                 <div class="rowInline" style="vertical-align: top;">
                     <p class="title">战区执行人</p>
-                    <div class="searchLabel" :class="searchData.warOperator ?'has' :'empty'"
+                    <div :class="warOperatorClass()"
                          @click="getDdWarOperator()">
                         {{searchData.warOperator? searchData.warOperator :'请选择' }}
                         <i class="icon iconfont iconweibiaoti--3"
@@ -335,6 +335,12 @@
                 this.searchData.warCheck = sessionStorage.warcode;
                 this.searchUseData.warCheck = sessionStorage.warcode;
             }
+            if (this.userLevel == 'B' || this.userLevel == 'E' || this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE') {
+                this.searchData.warOperatorValue = sessionStorage.userid;
+                this.searchUseData.warOperatorValue = sessionStorage.userid;
+                this.searchData.warOperator = sessionStorage.username;
+                this.searchUseData.warOperator = sessionStorage.username;
+            }
             this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
             let searchUseData = _this.$store.state[_this.searchUseData.currentRouterName].searchUseData;
             for (let ke in searchUseData) {
@@ -530,6 +536,14 @@
             }
         },
         methods: {
+            warOperatorClass() {
+                let temp_class = 'searchLabel';
+                temp_class += this.searchData.warOperator ? ' has' : ' empty';
+                if (this.userLevel == 'B' || this.userLevel == 'E' || this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE') {
+                    temp_class += ' disabled';
+                }
+                return temp_class;
+            },
             // 督导分派
             handleSelectionChange(val) {
                 this.multipleSelection = val;
@@ -560,7 +574,9 @@
                 this.warAssignShow = !this.warAssignShow;
             },
             getDdWarOperator() {
-                this.getddPersonInfo('changeSearchWarOperator');
+                if (!(this.userLevel == 'B' || this.userLevel == 'E' || this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE')) {
+                    this.getddPersonInfo('changeSearchWarOperator');
+                }
             },
             changeSearchWarOperator(userInfo) {
                 let users = userInfo.users[0];

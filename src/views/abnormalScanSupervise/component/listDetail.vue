@@ -261,9 +261,10 @@
                         label="督导结果">
                 </el-table-column>
                 <el-table-column
+                        v-if="userLevel == 'E'|| userLevel == 'B'|| userLevel == 'KE'|| userLevel == 'TE'|| userLevel == 'WE' || userLevel == 'DE'"
                         fixed="right"
                         label="操作"
-                        width="170">
+                        width="100">
                     <template slot-scope="scope">
                         <div v-if="userLevel == 'E'|| userLevel == 'B'|| userLevel == 'KE'|| userLevel == 'TE'|| userLevel == 'WE'"
                              class="tableButtons"

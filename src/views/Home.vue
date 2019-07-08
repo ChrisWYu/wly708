@@ -351,6 +351,10 @@
         cursor: pointer;
     }
 
+    .searchLabel.disabled {
+        cursor: not-allowed;
+    }
+
     .searchLabel.empty, .searchLabel.empty .iconweibiaoti--3 {
         color: #C3C7D0;
     }
@@ -361,7 +365,11 @@
         top: 0;
     }
 
-    .searchLabel:hover {
+    .searchLabel.disabled {
+        background-color: #F5F7FA;
+    }
+
+    .searchLabel:not(.disabled):hover {
         border: 1px solid #C0C4CC;
     }
 

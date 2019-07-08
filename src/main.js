@@ -78,6 +78,7 @@ dingTalkPc.ddConfig(jsApiList, '/api/ddadapter/dingding/expBarcode/getJsTicketPc
         // sessionStorage.setItem("tokencode", res.tokencode);
         sessionStorage.setItem("roleid", res.roleid);
         sessionStorage.setItem("userid", res.userid);
+        sessionStorage.setItem("username", res.username);
         sessionStorage.setItem("warcode", res.warinfo.warcode);
         // //用户名
         new Vue({
