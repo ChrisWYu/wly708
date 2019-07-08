@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="rowInline">
                     <p class="title">经销商</p>
-                    <el-input v-model="searchData.distributor" placeholder="请输入经销商名称"></el-input>
+                    <el-input v-model="searchData.distributor" placeholder="请输入"></el-input>
                     <!-- <el-select class="expandSelect" v-model="searchData.distributor" placeholder="请选择"
                                :clearable="clearable">
                     </el-select> -->
@@ -42,7 +42,7 @@
                                :clearable="clearable">
                         <el-option
                                 v-for="item in abnormalSmallCategoryList"
-                                :key="item.abnormal_detail_code"
+                                :key="item.abnormal_detail_name"
                                 :label="item.abnormal_detail_name"
                                 :value="item.abnormal_detail_code">
                         </el-option>
@@ -63,29 +63,22 @@
                         </el-option>
                     </el-select>
                 </div>
-                <div class="rowInline">
+                <div class="rowInline" style="vertical-align: top;">
                     <p class="title">战区负责人</p>
-                    <el-select class="expandSelect" v-model="searchData.warCharge" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in warChargeList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
+                    <div class="searchLabel" :class="searchData.warCharge ?'has' :'empty'" @click="getDdWarCharge()">
+                        {{searchData.warCharge ? searchData.warCharge :'请选择' }}
+                        <i class="icon iconfont iconweibiaoti--3"
+                           @click.stop.prevent="clearRowSearch(['warCharge','warChargeValue'])"></i>
+                    </div>
                 </div>
-                <div class="rowInline">
+                <div class="rowInline" style="vertical-align: top;">
                     <p class="title">战区执行人</p>
-                    <el-select class="expandSelect" v-model="searchData.warOperator" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in warOperatorList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
+                    <div class="searchLabel" :class="searchData.warOperator ?'has' :'empty'"
+                         @click="getDdWarOperator()">
+                        {{searchData.warOperator? searchData.warOperator :'请选择' }}
+                        <i class="icon iconfont iconweibiaoti--3"
+                           @click.stop.prevent="clearRowSearch(['warOperator','warOperatorValue'])"></i>
+                    </div>
                 </div>
                 <div class="rowInline">
                     <p class="title">核查情况</p>
@@ -147,15 +140,12 @@
             <div class="row">
                 <div class="rowInline">
                     <p class="title">督导负责人</p>
-                    <el-select class="expandSelect" v-model="searchData.superviseCharge" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in superviseChargeList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
+                    <div class="searchLabel" :class="searchData.superviseCharge ?'has' :'empty'"
+                         @click="getDdSuperviseCharge()">
+                        {{searchData.superviseCharge? searchData.superviseCharge :'请选择' }}
+                        <i class="icon iconfont iconweibiaoti--3"
+                           @click.stop.prevent="clearRowSearch(['superviseCharge','superviseChargeValue'])"></i>
+                    </div>
                 </div>
                 <div class="rowInline">
                     <p class="title">督导情况</p>
@@ -181,19 +171,19 @@
                     战区分派
                 </div>
                 <div v-if="buttonControl.superviseAssignShow" class="cusButton cusWhite operateButton"
-                     @click="superviseAssignClick">督导分派
+                     @click="superviseAssignClick">
+                    督导分派
                 </div>
                 <div v-if="buttonControl.operatorAssignShow" class="cusButton cusWhite operateButton"
-                     @click="appointOperator">指派执行人
+                     @click="appointOperator">
+                    指派执行人
                 </div>
-                <!-- <div v-if="buttonControl.exportDataShow" class="cusButton cusWhite operateButton" @click="exportData">
-                    导出数据
-                </div> -->
-                <div v-if='false' class="cusButton cusWhite operateButton" @click="exportData">
+                <div v-if="buttonControl.exportDataShow" class="cusButton cusWhite operateButton" @click="exportData">
                     导出数据
                 </div>
                 <div v-if="buttonControl.changeOperatorShow" class="cusButton cusWhite operateButton"
-                     @click="changeOperator">调整执行人
+                     @click="changeOperator">
+                    调整执行人
                 </div>
             </div>
             <el-table
@@ -202,6 +192,7 @@
                     @select="handleSelectOne"
                     @select-all="handleSelectAll"
                     empty-text="暂无数据～"
+                    @selection-change="handleSelectionChange"
                     border
                     style="width: 100%;margin-top: 16px;">
                 <el-table-column
@@ -268,13 +259,13 @@
                 <el-table-column
                         show-overflow-tooltip
                         width="170"
-                        prop="runStartTime"
+                        prop="checkStartTime"
                         label="分派时间">
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
                         width="170"
-                        prop="runEndTime"
+                        prop="checkEndTime"
                         label="截止时间">
                 </el-table-column>
                 <el-table-column
@@ -320,7 +311,8 @@
             </el-pagination>
         </div>
         <loading v-if="loadingStatus" v-model="loadingStatus"></loading>
-        <warAssign v-if="warAssignShow" v-model="warAssignShow" :warCheckList="warCheckList"></warAssign>
+        <warAssign v-if="warAssignShow" v-model="warAssignShow" :warCheckList="warCheckList"
+                   :distributors="distributors"></warAssign>
     </div>
 </template>
 
@@ -343,14 +335,11 @@
                 this.searchData.warCheck = sessionStorage.warcode;
             }
             this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
-            this.$http.all([this.getWarCheckList(), this.getWarChargeList(), this.getWarOperatorList(), this.getsuperviseChargeList(), this.getWarBelongList(), this.getDistributorList(), this.getList()])
-                .then(this.$http.spread((war, warCharge, warOperator, superviseCharge, warBelong, distributor, list) => {
+            this.$http.all([this.getWarCheckList(), this.getWarBelongList(), this.getDistributorList(), this.getList()])
+                .then(this.$http.spread((war, warBelong, distributor, list) => {
                     _this.tableData = list.data.data.list;
                     _this.tableTotal = list.data.data.total;
                     _this.warCheckList = war.data.data;
-                    _this.warChargeList = warCharge.data.data;
-                    _this.warOperatorList = warOperator.data.data;
-                    _this.superviseChargeList = superviseCharge.data.data;
                     _this.warBelongList = warBelong.data.data;
                     _this.distributorList = distributor.data.data;
                     let searchData = _this.$store.state[_this.searchData.currentRouterName].searchData;
@@ -386,6 +375,8 @@
         },
         data: function () {
             return {
+                multipleSelection: [],
+                distributors: [],
                 loadingStatus: false,
                 warAssignShow: '',
                 buttonControl: {},
@@ -395,8 +386,11 @@
                     currentRouterName: JSON.parse(JSON.stringify(this.$route.name)),
                     warCheck: '',
                     warCharge: '',
+                    warChargeValue: '',
                     warOperator: '',
+                    warOperatorValue: '',
                     superviseCharge: '',
+                    superviseChargeValue: '',
                     checkStatus: '',
                     superviseStatus: '',
                     warBelong: '',
@@ -409,9 +403,6 @@
                 },
                 clearable: true,
                 warCheckList: [],
-                warChargeList: [],
-                warOperatorList: [],
-                superviseChargeList: [],
                 checkStatusList: [
                     {
                         id: '1',
@@ -510,9 +501,19 @@
                 tableData: [],
                 checkData: [],
                 checkDataId: [],
+                focusTime: 0,
             }
         },
         methods: {
+            // 督导分派
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+                let distributors = [];
+                this.multipleSelection.map(item => {
+                    distributors.push(item.id);
+                })
+                this.distributors = distributors;
+            },
             windowScroll: function () {
                 if (window.pageXOffset) {
                     this.scrollInfo = {
@@ -529,8 +530,61 @@
             scrollToHistory: function (y) {
                 document.documentElement.scrollTop = y;
             },
-            //钉钉选人
-            dingpeople: function () {
+            warAssignClick() {
+                // 战区分派
+                this.warAssignShow = !this.warAssignShow;
+            },
+            getDdWarOperator() {
+                this.getddPersonInfo('changeSearchWarOperator');
+            },
+            changeSearchWarOperator(userInfo) {
+                let users = userInfo.users[0];
+                this.searchData.warOperator = users.name;
+                this.searchData.warOperatorValue = users.emplId;
+            },
+            getDdWarCharge() {
+                this.getddPersonInfo('changeSearchWarCharge');
+            },
+            changeSearchWarCharge(userInfo) {
+                let users = userInfo.users[0];
+                this.searchData.warCharge = users.name;
+                this.searchData.warChargeValue = users.emplId;
+            },
+            getDdSuperviseCharge() {
+                this.getddPersonInfo('changeSearchSuperviseCharge');
+            },
+            changeSearchSuperviseCharge(userInfo) {
+                let users = userInfo.users[0];
+                this.searchData.superviseCharge = users.name;
+                this.searchData.superviseChargeValue = users.emplId;
+            },
+            getddPersonInfo(func) {
+                var _this = this;
+                dd.biz.contact.complexPicker({
+                    title: "选择人员",            //标题
+                    corpId: 'ding5da63018b1631f1b35c2f4657eb6378f',              //企业的corpId
+                    multiple: false,            //是否多选
+                    limitTips: "超出了",          //超过限定人数返回提示
+                    maxUsers: 1,            //最大可选人数
+                    pickedUsers: [],            //已选用户
+                    pickedDepartments: [],          //已选部门
+                    disabledUsers: [],            //不可选用户
+                    disabledDepartments: [],        //不可选部门
+                    requiredUsers: [],            //必选用户（不可取消选中状态）
+                    requiredDepartments: [],        //必选部门（不可取消选中状态）
+                    appId: 'dinglswrqzsupezvoryy',              //微应用的Id
+                    permissionType: "GLOBAL",          //可添加权限校验，选人权限，目前只有GLOBAL这个参数
+                    responseUserOnly: true,        //返回人，或者返回人和部门
+                    startWithDepartmentId: -1,   //仅支持0和-1
+                    onSuccess: function (result) {
+                        _this[func](result);
+                    },
+                    onFail: function (err) {
+
+                    }
+                });
+            },
+            superviseAssignClick() {
                 var t = this;
                 dd.biz.contact.complexPicker({
                     title: "选择人员",            //标题
@@ -550,33 +604,97 @@
                     startWithDepartmentId: -1,   //仅支持0和-1
                     onSuccess: function (result) {
 
-                        // console.log(result.users[0])
-                        // //emplId,name
-                        // t.empname = result.users[0].name;
-                        // t.emplId = result.users[0].emplId;
-                        // console.log(t.empname + "工号：" + t.emplId)
+                        console.log(result.users[0])
+                        let superviseChargeName = result.users[0].name;
+                        let superviseChargeId = result.users[0].emplId;
+                        console.log(superviseChargeName + "工号：" + superviseChargeId)
+
+
+                        t.$http.post(`/api/ddadapter/openApi/data`, {
+                            "code": "00711ZI07",
+                            "data": {
+                                'superviseChargeId': superviseChargeId,
+                                'superviseChargeName': superviseChargeName,
+                                'distributors': t.distributors
+                            }
+                        }, {
+                            headers: {
+                                'content-type': 'application/json',
+                            },
+                        }).then(res => {
+
+                            console.log(res)
+
+                        });
+
+
                     },
                     onFail: function (err) {
                         console.log("失败")
                         console.log(err)
                     }
                 });
+
             },
-            warAssignClick() {
-                // 战区分派
-                this.warAssignShow = !this.warAssignShow;
-            },
-            superviseAssignClick() {
-                this.dingpeople();
-            },
+            // 指派执行人
             appointOperator() {
-                this.dingpeople();
+                var t = this;
+                dd.biz.contact.complexPicker({
+                    title: "选择人员",            //标题
+                    corpId: 'ding5da63018b1631f1b35c2f4657eb6378f',              //企业的corpId
+                    multiple: false,            //是否多选
+                    limitTips: "超出了",          //超过限定人数返回提示
+                    maxUsers: 1,            //最大可选人数
+                    pickedUsers: [],            //已选用户
+                    pickedDepartments: [],          //已选部门
+                    disabledUsers: [],            //不可选用户
+                    disabledDepartments: [],        //不可选部门
+                    requiredUsers: [],            //必选用户（不可取消选中状态）
+                    requiredDepartments: [],        //必选部门（不可取消选中状态）
+                    appId: 'dinglswrqzsupezvoryy',              //微应用的Id
+                    permissionType: "GLOBAL",          //可添加权限校验，选人权限，目前只有GLOBAL这个参数
+                    responseUserOnly: true,        //返回人，或者返回人和部门
+                    startWithDepartmentId: -1,   //仅支持0和-1
+                    onSuccess: function (result) {
+
+                        console.log(result.users[0])
+                        let warOperatorName = result.users[0].name;
+                        let warOperatorId = result.users[0].emplId;
+                        console.log(warOperatorName + "工号：" + warOperatorId)
+
+
+                        t.$http.post(`/api/ddadapter/openApi/data`, {
+                            "code": "00711ZI08",
+                            "data": {
+                                'warOperatorId': warOperatorId,
+                                'warOperatorName': warOperatorName,
+                                'distributors': t.distributors
+                            }
+                        }, {
+                            headers: {
+                                'content-type': 'application/json',
+                            },
+                        }).then(res => {
+
+                            console.log(res)
+
+                        });
+
+
+                    },
+                    onFail: function (err) {
+                        console.log("失败")
+                        console.log(err)
+                    }
+                });
+
+
             },
             exportData() {
                 console.log(this.windowScroll())
             },
             changeOperator() {
-                this.dingpeople();
+
             },
             loadingShow: function () {
                 this.loadingStatus = true;
@@ -594,13 +712,22 @@
             searchDataClick: function () {
                 this.currentChange(1);
             },
+            clearRowSearch(t) {
+                console.log(t);
+                for (let i = 0; i < t.length; i++) {
+                    this.searchData[t[i]] = '';
+                }
+            },
             clearDataClick: function () {
                 if (this.userLevel == 'D' || this.userLevel == 'DE') {
                     this.searchData.warCheck = '';
                 }
                 this.searchData.warCharge = '';
+                this.searchData.warChargeValue = '';
                 this.searchData.warOperator = '';
+                this.searchData.warOperatorValue = '';
                 this.searchData.superviseCharge = '';
+                this.searchData.superviseChargeValue = '';
                 this.searchData.checkStatus = '';
                 this.searchData.superviseStatus = '';
                 this.searchData.warBelong = '';
@@ -687,19 +814,9 @@
             //         },
             //     });
             // },
-            getAbnormalLargeCategoryList: function () {
-                return this.$http.post(`/api/ddadapter/openApi/data`, {
-                    "code": "9",
-                    "data": {
-                        userid: sessionStorage.userid
-                    }
-                }, {
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                });
-            },
             getAbnormalSmallCategoryList: function () {
+                this.abnormalSmallCategoryList = [];
+                this.searchData.abnormalSmallCategory = '';
                 this.$http.post(`/api/ddadapter/openApi/data`, {
                     "code": "00711ZI05",
                     "data": {
@@ -737,48 +854,10 @@
                     },
                 });
             },
-            getsuperviseChargeList: function () {
-                return this.$http.post(`/api/ddadapter/openApi/data`, {
-                    "code": "5",
-                    "data": {
-                        userid: sessionStorage.userid
-                    }
-                }, {
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                });
-            },
-            getWarOperatorList: function () {
-                return this.$http.post(`/api/ddadapter/openApi/data`, {
-                    "code": "4",
-                    "data": {
-                        userid: sessionStorage.userid
-                    }
-
-                }, {
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                });
-            },
             getWarCheckList: function () {
                 return this.$http.post(`/api/ddadapter/openApi/data`, {
                     "code": "00711ZI03",
                     "data": {
-                        userid: sessionStorage.userid
-                    }
-                }, {
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                });
-            },
-            getWarChargeList: function () {
-                return this.$http.post(`/api/ddadapter/openApi/data`, {
-                    "code": "3",
-                    "data": {
-                        //用户id
                         userid: sessionStorage.userid
                     }
                 }, {
@@ -799,11 +878,11 @@
                             //核查战区
                             warCheck: this.searchData.warCheck,
                             //战区负责人
-                            warCharge: this.searchData.warCharge,
+                            warCharge: this.searchData.warChargeValue,
                             //战区执行人
-                            warOperator: this.searchData.warOperator,
+                            warOperator: this.searchData.warOperatorValue,
                             //督导负责人
-                            superviseCharge: this.searchData.superviseCharge,
+                            superviseCharge: this.searchData.superviseChargeValue,
                             //核查情况
                             checkStatus: this.searchData.checkStatus,
                             //督导情况
@@ -836,7 +915,6 @@
                 this.loadingShow();
                 this.getList().then((res) => {
                     let tableData = res.data.data.list;
-                    console.log(tableData);
                     // this.tableData = tableData;
                     // let checkId = JSON.parse(JSON.stringify(this.checkDataId));
                     // let checkData = JSON.parse(JSON.stringify(this.checkData));

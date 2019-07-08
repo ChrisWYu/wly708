@@ -67,12 +67,12 @@
             confirm() {
                 this.loadingShow();
                 let data = {
-                    'describe': this.describe,
-                    'date': this.date,
+                    'retvemo': this.describe,
+                    'datetime': this.date,
+                    'codeIds': [this.currentData.id]
                 };
-                this.$http.post(`/node/user/test`, {
-                        //return this.$http.post("/api/ddadapter/openApi/data", {
-                        "code": "18",
+                this.$http.post("/api/ddadapter/openApi/data", {
+                        "code": "00711ZI09",
                         "data": data
                     }, {
                         headers: {
@@ -80,10 +80,11 @@
                         },
                     }
                 ).then(res => {
-                    let way = Number(res.data.code) === 200 ? 'success' : 'error';
-                    this.messagePrompt(way, res.data.msg)
+                    let way = Number(res.data.statusCode) === 200 ? 'success' : 'error';
+                    this.messagePrompt(way, res.data.message)
                 }, error => {
-                    console.log(error);
+                    this.loadingCancel();
+                    this.messagePrompt('error', '服务器错误！');
                 });
             }
         }

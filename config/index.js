@@ -11,7 +11,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://218.89.67.51:85/', //正式服务器
+        target: 'http://10.0.134.187:72/', //正式服务器
         changeOrigin: true, //是否跨域
         pathRewrite: {
           '^/api': '/api'
@@ -29,7 +29,7 @@ module.exports = {
     //   },
     // Various Dev Server settings
     // host: 'localhost', // can be overwritten by process.env.HOST
-    host: '172.16.2.223', // can be overwritten by process.env.HOST 五粮 液
+    host: '10.2.8.10', // can be overwritten by process.env.HOST 五粮 液
     // host: 'localhost', // can be overwritten by process.env.HOST 五粮 液
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,

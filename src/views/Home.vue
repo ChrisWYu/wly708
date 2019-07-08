@@ -338,6 +338,38 @@
         font-size: 14px;
     }
 
+    .searchLabel {
+        height: 34px;
+        line-height: 34px;
+        border: 1px solid #DCDFE6;
+        border-radius: 4px;
+        padding: 0 8px;
+        font-size: 14px;
+        color: #9B9B9B;
+        width: calc(100% - 16px);
+        position: relative;
+        cursor: pointer;
+    }
+
+    .searchLabel.empty, .searchLabel.empty .iconweibiaoti--3 {
+        color: #C3C7D0;
+    }
+
+    .searchLabel .icon {
+        position: absolute;
+        right: 10px;
+        top: 0;
+    }
+
+    .searchLabel:hover {
+        border: 1px solid #C0C4CC;
+    }
+
+    .searchLabel.has .iconweibiaoti--3:hover:before {
+        font-family: "element-icons" !important;
+        content: "\e78d";
+    }
+
     .cusButton {
         display: inline-block;
         width: 100px;

@@ -265,7 +265,8 @@
                         label="操作"
                         width="170">
                     <template slot-scope="scope">
-                        <div v-if="userLevel == 'E'|| userLevel == 'B'" class="tableButtons"
+                        <div v-if="userLevel == 'E'|| userLevel == 'B'|| userLevel == 'KE'|| userLevel == 'TE'|| userLevel == 'WE'"
+                             class="tableButtons"
                              @click="checkOne(scope.row)"><i
                                 class="icon iconfont iconweibiaoti--5"></i>
                             <p>核查</p></div>
@@ -299,7 +300,12 @@
                 </div>
             </el-pagination>
             <div class="row" style="text-align: center;">
-                <div class="cusButton cusWhite" @click="backTolast()">返回</div>
+                <div class="cusButton cusWhite" @click="backTolast()" style="margin-right:20px;">返回</div>
+
+                <div v-if="userLevel == 'E'|| userLevel == 'B'|| userLevel == 'KE'|| userLevel == 'TE'|| userLevel == 'WE' || userLevel == 'DE'"
+                     class="cusButton cusRed" @click="sureTolast()">提交
+                </div>
+
             </div>
         </div>
         <checkOne v-if="checkOneShow" v-model="checkOneShow"
@@ -344,7 +350,7 @@
                 return this.$route.params.id;
             },
             userLevel: function () {
-                return sessionStorage.level;
+                return sessionStorage.roleid;
             },
         },
         watch: {
@@ -416,6 +422,27 @@
             },
             loadingCancel: function () {
                 this.loadingStatus = false;
+            },
+            sureTolast: function () {
+                this.$http.post("/api/ddadapter/openApi/data", {
+                        "code": "00711ZI11",
+                        "data": {
+                            'expDistributorId': this.$route.params.id,
+                            'roleid': sessionStorage.getItem("roleid")
+                        }
+                    }, {
+                        headers: {
+                            'content-type': 'application/json',
+                        },
+                    }
+                ).then(res => {
+                    let way = Number(res.data.statusCode) === 200 ? 'success' : 'error';
+                    // this.messagePrompt(way, res.data.msg)
+                    this.backTolast();
+                }, error => {
+                    console.log(error);
+                    this.backTolast();
+                });
             },
             backTolast: function () {
                 this.$router.push({

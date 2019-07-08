@@ -9,8 +9,8 @@
                 :before-close="close"
         >
             <el-radio-group v-model="warValue">
-                <el-radio class="Selection-radio" v-for="item in warCheckList" :key="item.war_code"
-                          :label="item.war_code">{{item.war_name}}
+                <el-radio class="Selection-radio" v-for="(item,index) in warCheckList" :key="item.war_code"
+                          :label="index">{{item.war_name}}
                 </el-radio>
             </el-radio-group>
             <span slot="footer" class="dialog-footer">
@@ -26,7 +26,7 @@
     import loading from '../../common/loading'
 
     export default {
-        props: ['warCheckList'],
+        props: ['warCheckList', 'distributors'],
         mounted() {
 
         },
@@ -61,15 +61,18 @@
             confirm() {
                 this.loadingShow();
                 let warValue = this.warValue;
+                let warInfo = this.warCheckList[this.warValue];
                 if (warValue === '') {
                     this.messagePrompt('warning', '请选择分派战区！');
                     return;
                 }
                 let data = {
-                    'warValue': this.warValue,
+                    'war_code': warInfo.war_code,
+                    'war_name': warInfo.war_name,
+                    'distributors': this.distributors
                 };
                 return this.$http.post("/api/ddadapter/openApi/data", {
-                        "code": "18",
+                        "code": "00711ZI06",
                         "data": data
                     }, {
                         headers: {
@@ -77,10 +80,11 @@
                         },
                     }
                 ).then(res => {
-                    let way = Number(res.data.code) === 200 ? 'success' : 'error';
-                    this.messagePrompt(way, res.data.msg)
+                    let way = Number(res.data.statusCode) === 200 ? 'success' : 'error';
+                    this.messagePrompt(way, res.data.message)
                 }, error => {
                     this.loadingCancel();
+                    this.messagePrompt('error', '服务器错误！');
                 })
             }
         }
