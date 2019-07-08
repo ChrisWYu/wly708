@@ -109,7 +109,7 @@
                         </el-option>
                     </el-select>
                 </div>
-                <div class="rowInline" style="white-space: nowrap;">
+                <div class="rowInline buttonOperate" style="white-space: nowrap;">
                     <div class="cusButton cusRed" @click="searchDataClick">查询</div>
                     <div class="cusButton cusWhite" @click="clearDataClick" style="margin-left: 20px;">重置</div>
                 </div>
