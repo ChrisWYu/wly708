@@ -23,7 +23,7 @@
                 <!--</div>-->
                 <div class="rowInline">
                     <p class="title">异常大类</p>
-                    <el-select class="expandSelect" v-model="abnormalLargeCategory" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="searchData.abnormalLargeCategory" placeholder="请选择"
                                :clearable="clearable" @change="getAbnormalSmallCategoryList">
                         <el-option
                                 v-for="item in abnormalLargeCategoryList"
@@ -35,7 +35,7 @@
                 </div>
                 <div class="rowInline">
                     <p class="title">异常明细</p>
-                    <el-select class="expandSelect" v-model="abnormalSmallCategory" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="searchData.abnormalSmallCategory" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
                                 v-for="item in abnormalSmallCategoryList"
@@ -52,16 +52,16 @@
                     <el-input
                             class="expandInput"
                             placeholder="请输入"
-                            v-model="logisticsCode">
+                            v-model="searchData.logisticsCode">
                     </el-input>
                 </div>
                 <div class="rowInline">
                     <p class="title">扫码出库经销商</p>
-                    <el-input v-model="scanOutDistributor" placeholder="请输入"></el-input>
+                    <el-input v-model="searchData.scanOutDistributor" placeholder="请输入"></el-input>
                 </div>
                 <div class="rowInline">
                     <p class="title">扫码出库战区</p>
-                    <el-select class="expandSelect" v-model="scanOutWar" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="searchData.scanOutWar" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
                                 v-for="item in scanOutWarList"
@@ -73,7 +73,7 @@
                 </div>
                 <div class="rowInline">
                     <p class="title">扫码出库渠道</p>
-                    <el-select class="expandSelect" v-model="scanOutChannel" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="searchData.scanOutChannel" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
                                 v-for="item in scanOutChannelList"
@@ -87,7 +87,7 @@
             <div class="row">
                 <div class="rowInline">
                     <p class="title">是否核查</p>
-                    <el-select class="expandSelect" v-model="warIsCheck" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="searchData.warIsCheck" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
                                 v-for="item in warIsCheckList"
@@ -99,7 +99,7 @@
                 </div>
                 <div class="rowInline">
                     <p class="title">是否督导</p>
-                    <el-select class="expandSelect" v-model="isSupervise" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="searchData.isSupervise" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
                                 v-for="item in isSuperviseList"
@@ -340,12 +340,30 @@
                 clearable: true,
                 loadingStatus: false,
                 /** 查询条件开始 */
-                searchData: {},
-                logisticsCode: '',
-                abnormalLargeCategory: '',
-                abnormalSmallCategory: '',
+                searchData: {
+                    logisticsCode: '',
+                    abnormalLargeCategory: '',
+                    abnormalSmallCategory: '',
+                    warIsCheck: '',
+                    isSupervise: '',
+                    scanOutDistributor: '',
+                    scanOutWar: '',
+                    scanOutChannel: ''
+                },
+                searchUseData: {
+                    logisticsCode: '',
+                    abnormalLargeCategory: '',
+                    abnormalSmallCategory: '',
+                    warIsCheck: '',
+                    isSupervise: '',
+                    scanOutDistributor: '',
+                    scanOutWar: '',
+                    scanOutChannel: ''
+                },
+                codeSourceDistributor: '',
+                codeSourceWar: '',
+                codeSourceChannel: '',
                 abnormalSmallCategoryList: [],
-                warIsCheck: '',
                 warIsCheckList: [
                     {
                         id: 1,
@@ -356,7 +374,6 @@
                         name: '否'
                     }
                 ],
-                isSupervise: '',
                 isSuperviseList: [
                     {
                         id: 1,
@@ -367,14 +384,7 @@
                         name: '否'
                     }
                 ],
-                codeSourceDistributor: '',
-                codeSourceDistributorList: [],
-                codeSourceWar: '',
-                codeSourceChannel: '',
-                scanOutDistributor: '',
-                scanOutWar: '',
                 scanOutWarList: [],
-                scanOutChannel: '',
                 scanOutChannelList: [],
                 abnormalLargeCategoryList: [
                     {
@@ -441,17 +451,27 @@
                 });
             },
             searchDataClick: function () {
+                this.searchUseData = JSON.parse(JSON.stringify(this.searchData));
                 this.currentChange(1);
             },
             clearDataClick: function () {
-                this.logisticsCode = '';
-                this.abnormalLargeCategory = '';
-                this.abnormalSmallCategory = '';
-                this.warIsCheck = '';
-                this.isSupervise = '';
-                this.scanOutDistributor = '';
-                this.scanOutWar = '';
-                this.scanOutChannel = '';
+                this.searchData.logisticsCode = '';
+                this.searchData.abnormalLargeCategory = '';
+                this.searchData.abnormalSmallCategory = '';
+                this.searchData.warIsCheck = '';
+                this.searchData.isSupervise = '';
+                this.searchData.scanOutDistributor = '';
+                this.searchData.scanOutWar = '';
+                this.searchData.scanOutChannel = '';
+
+                this.searchUseData.logisticsCode = '';
+                this.searchUseData.abnormalLargeCategory = '';
+                this.searchUseData.abnormalSmallCategory = '';
+                this.searchUseData.warIsCheck = '';
+                this.searchUseData.isSupervise = '';
+                this.searchUseData.scanOutDistributor = '';
+                this.searchUseData.scanOutWar = '';
+                this.searchUseData.scanOutChannel = '';
             },
             handleSelectOne: function (ar, ob) {
 
@@ -533,12 +553,11 @@
             },
             getAbnormalSmallCategoryList: function () {
                 this.abnormalSmallCategoryList = [];
-                // this.searchData.abnormalSmallCategory = '';
-                this.abnormalSmallCategory = '';
+                this.searchData.abnormalSmallCategory = '';
                 this.$http.post(`/api/ddadapter/openApi/data`, {
                     "code": "00711ZI05",
                     "data": {
-                        abnormal_type: this.abnormalLargeCategory
+                        abnormal_type: this.searchData.abnormalLargeCategory
                     }
                 }, {
                     headers: {
@@ -557,21 +576,21 @@
                             //每页条数
                             pageSize: this.pageSize,
                             //物流码
-                            logisticsCode: this.logisticsCode,
+                            logisticsCode: this.searchUseData.logisticsCode,
                             //异常大类
-                            abnormalLargeCategory: this.abnormalLargeCategory,
+                            abnormalLargeCategory: this.searchUseData.abnormalLargeCategory,
                             //异常明细
-                            abnormalSmallCategory: this.abnormalSmallCategory,
+                            abnormalSmallCategory: this.searchUseData.abnormalSmallCategory,
                             //战区是否核查
-                            warIsCheck: this.warIsCheck,
+                            warIsCheck: this.searchUseData.warIsCheck,
                             //是否督导
-                            isSupervise: this.isSupervise,
+                            isSupervise: this.searchUseData.isSupervise,
                             //扫码出库经销商
-                            scanOutDistributor: this.scanOutDistributor,
+                            scanOutDistributor: this.searchUseData.scanOutDistributor,
                             //扫码出库战区
-                            scanOutWar: this.scanOutWar,
+                            scanOutWar: this.searchUseData.scanOutWar,
                             //扫码出库渠道
-                            scanOutChannel: this.scanOutChannel,
+                            scanOutChannel: this.searchUseData.scanOutChannel,
                             //异常扫码内容id
                             expDistributorId: this.expDistributorId
                         }
