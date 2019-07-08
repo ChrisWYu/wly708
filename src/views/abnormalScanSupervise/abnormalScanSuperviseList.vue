@@ -333,6 +333,7 @@
             this.loadingShow();
             if (this.userLevel != 'D' && this.userLevel != 'DE') {
                 this.searchData.warCheck = sessionStorage.warcode;
+                this.searchUseData.warCheck = sessionStorage.warcode;
             }
             this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
             let searchUseData = _this.$store.state[_this.searchUseData.currentRouterName].searchUseData;
