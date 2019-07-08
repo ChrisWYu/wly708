@@ -536,6 +536,16 @@
             }
         },
         methods: {
+            loadingShow: function () {
+                this.loadingStatus = true;
+            },
+            loadingCancel: function () {
+                this.loadingStatus = false;
+            },
+            messagePrompt: function (way, info) {
+                this.loadingCancel();
+                this.$message({message: info, type: way});
+            },
             warOperatorClass() {
                 let temp_class = 'searchLabel';
                 temp_class += this.searchData.warOperator ? ' has' : ' empty';
@@ -544,7 +554,6 @@
                 }
                 return temp_class;
             },
-            // 督导分派
             handleSelectionChange(val) {
                 this.multipleSelection = val;
                 let distributors = [];
@@ -625,123 +634,55 @@
                     }
                 });
             },
-            superviseAssignClick() {
-                var t = this;
-                dd.biz.contact.complexPicker({
-                    title: "选择人员",            //标题
-                    corpId: 'ding5da63018b1631f1b35c2f4657eb6378f',              //企业的corpId
-                    multiple: false,            //是否多选
-                    limitTips: "超出了",          //超过限定人数返回提示
-                    maxUsers: 1,            //最大可选人数
-                    pickedUsers: [],            //已选用户
-                    pickedDepartments: [],          //已选部门
-                    disabledUsers: [],            //不可选用户
-                    disabledDepartments: [],        //不可选部门
-                    requiredUsers: [],            //必选用户（不可取消选中状态）
-                    requiredDepartments: [],        //必选部门（不可取消选中状态）
-                    appId: 'dinglswrqzsupezvoryy',              //微应用的Id
-                    permissionType: "GLOBAL",          //可添加权限校验，选人权限，目前只有GLOBAL这个参数
-                    responseUserOnly: true,        //返回人，或者返回人和部门
-                    startWithDepartmentId: -1,   //仅支持0和-1
-                    onSuccess: function (result) {
-
-                        console.log(result.users[0])
-                        let superviseChargeName = result.users[0].name;
-                        let superviseChargeId = result.users[0].emplId;
-                        console.log(superviseChargeName + "工号：" + superviseChargeId)
-
-
-                        t.$http.post(`/api/ddadapter/openApi/data`, {
-                            "code": "00711ZI07",
-                            "data": {
-                                'superviseChargeId': superviseChargeId,
-                                'superviseChargeName': superviseChargeName,
-                                'distributors': t.distributors
-                            }
-                        }, {
-                            headers: {
-                                'content-type': 'application/json',
-                            },
-                        }).then(res => {
-
-                            console.log(res)
-
-                        });
-
-
-                    },
-                    onFail: function (err) {
-                        console.log("失败")
-                        console.log(err)
+            superviseAssignHandle(result) {
+                let superviseChargeName = result.users[0].name;
+                let superviseChargeId = result.users[0].emplId;
+                this.$http.post(`/api/ddadapter/openApi/data`, {
+                    "code": "00711ZI07",
+                    "data": {
+                        'superviseChargeId': superviseChargeId,
+                        'superviseChargeName': superviseChargeName,
+                        'distributors': this.distributors
                     }
+                }, {
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                }).then(res => {
+                    let way = Number(res.data.statusCode) === 200 ? 'success' : 'error';
+                    this.messagePrompt(way, res.data.message);
                 });
-
             },
-            // 指派执行人
-            appointOperator() {
-                var t = this;
-                dd.biz.contact.complexPicker({
-                    title: "选择人员",            //标题
-                    corpId: 'ding5da63018b1631f1b35c2f4657eb6378f',              //企业的corpId
-                    multiple: false,            //是否多选
-                    limitTips: "超出了",          //超过限定人数返回提示
-                    maxUsers: 1,            //最大可选人数
-                    pickedUsers: [],            //已选用户
-                    pickedDepartments: [],          //已选部门
-                    disabledUsers: [],            //不可选用户
-                    disabledDepartments: [],        //不可选部门
-                    requiredUsers: [],            //必选用户（不可取消选中状态）
-                    requiredDepartments: [],        //必选部门（不可取消选中状态）
-                    appId: 'dinglswrqzsupezvoryy',              //微应用的Id
-                    permissionType: "GLOBAL",          //可添加权限校验，选人权限，目前只有GLOBAL这个参数
-                    responseUserOnly: true,        //返回人，或者返回人和部门
-                    startWithDepartmentId: -1,   //仅支持0和-1
-                    onSuccess: function (result) {
-
-                        console.log(result.users[0])
-                        let warOperatorName = result.users[0].name;
-                        let warOperatorId = result.users[0].emplId;
-                        console.log(warOperatorName + "工号：" + warOperatorId)
-
-
-                        t.$http.post(`/api/ddadapter/openApi/data`, {
-                            "code": "00711ZI08",
-                            "data": {
-                                'warOperatorId': warOperatorId,
-                                'warOperatorName': warOperatorName,
-                                'distributors': t.distributors
-                            }
-                        }, {
-                            headers: {
-                                'content-type': 'application/json',
-                            },
-                        }).then(res => {
-
-                            console.log(res)
-
-                        });
-
-
-                    },
-                    onFail: function (err) {
-                        console.log("失败")
-                        console.log(err)
+            appointOperatorHandle(result) {
+                let warOperatorName = result.users[0].name;
+                let warOperatorId = result.users[0].emplId;
+                this.$http.post(`/api/ddadapter/openApi/data`, {
+                    "code": "00711ZI08",
+                    "data": {
+                        'warOperatorId': warOperatorId,
+                        'warOperatorName': warOperatorName,
+                        'distributors': this.distributors
                     }
+                }, {
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                }).then(res => {
+                    let way = Number(res.data.statusCode) === 200 ? 'success' : 'error';
+                    this.messagePrompt(way, res.data.message);
                 });
-
-
+            },
+            superviseAssignClick() {
+                this.getddPersonInfo('superviseAssignHandle');
+            },
+            appointOperator() {
+                this.getddPersonInfo('appointOperatorHandle');
             },
             exportData() {
                 console.log(this.windowScroll())
             },
             changeOperator() {
 
-            },
-            loadingShow: function () {
-                this.loadingStatus = true;
-            },
-            loadingCancel: function () {
-                this.loadingStatus = false;
             },
             totalAbnormalStatusTotal(e) {
                 return e.codeA + e.codeB + e.codeC + e.codeD;
