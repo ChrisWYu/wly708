@@ -14,6 +14,7 @@ const state = {
         searchData: {},
         searchUseData: {},
         scrollY: 0,
+        operateRow: {}
     },
 }
 
@@ -39,6 +40,10 @@ const mutations = {
     },
     saveSearchUseData(state, params) {
         state[params['currentRouterName']].searchUseData = params;
+    },
+    saveOperateRow(state, params) {
+        let module = params.module;
+        state[module].operateRow = params.operateRow;
     },
     INCREMENT(state) {
         state.count++

@@ -60,44 +60,27 @@
                         </el-option>
                     </el-select>
                 </div>
-                <div class="rowInline">
+                <div class="rowInline" style="vertical-align: top">
                     <p class="title">码源经销商</p>
-                    <el-select class="expandSelect" v-model="codeSourceDistributor" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in codeSourceDistributorList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
+                    <div class="searchLabel disabled has">
+                        {{codeSourceDistributor}}
+                        <i class="icon iconfont iconweibiaoti--3"></i>
+                    </div>
                 </div>
-                <div class="rowInline">
+                <div class="rowInline" style="vertical-align: top">
                     <p class="title">码源战区</p>
-                    <el-select class="expandSelect" v-model="codeSourceWar" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in codeSourceWarList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
+                    <div class="searchLabel disabled has">
+                        {{codeSourceWar}}
+                        <i class="icon iconfont iconweibiaoti--3"></i>
+                    </div>
                 </div>
-                <div class="rowInline">
-                    <p class="title">码源渠道</p>
-                    <el-select class="expandSelect" v-model="codeSourceChannel" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in codeSourceChannelList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
-            </div>
-            <div class="row">
+                <!--<div class="rowInline" style="vertical-align: top">-->
+                <!--<p class="title">码源渠道</p>-->
+                <!--<div class="searchLabel disabled has">-->
+                <!--{{codeSourceChannel}}-->
+                <!--<i class="icon iconfont iconweibiaoti&#45;&#45;3"></i>-->
+                <!--</div>-->
+                <!--</div>-->
                 <div class="rowInline">
                     <p class="title">扫码出库经销商</p>
                     <el-select class="expandSelect" v-model="scanOutDistributor" placeholder="请选择"
@@ -110,6 +93,8 @@
                         </el-option>
                     </el-select>
                 </div>
+            </div>
+            <div class="row">
                 <div class="rowInline">
                     <p class="title">扫码出库战区</p>
                     <el-select class="expandSelect" v-model="scanOutWar" placeholder="请选择"
@@ -194,12 +179,12 @@
                         prop="scanOutChannel"
                         label="扫码出库渠道">
                 </el-table-column>
-                <el-table-column
-                        show-overflow-tooltip
-                        width="145"
-                        prop="scanOutNumber"
-                        label="扫码出库单号">
-                </el-table-column>
+                <!--<el-table-column-->
+                        <!--show-overflow-tooltip-->
+                        <!--width="145"-->
+                        <!--prop="scanOutNumber"-->
+                        <!--label="扫码出库单号">-->
+                <!--</el-table-column>-->
                 <el-table-column
                         show-overflow-tooltip
                         width="160"
@@ -328,15 +313,17 @@
         mounted() {
             let _this = this;
             _this.loadingShow();
-            this.$http.all([this.getAbnormalLargeCategoryList(), this.getAbnormalDetailList(), this.getCodeSourceDistributorList(), this.getCodeSourceWarList(), this.getCodeSourceChannelList(), this.getScanOutDistributorList(), this.getScanOutWarList(), this.getScanOutChannelList(), this.getDetailList()])
-                .then(this.$http.spread(function (abnormalLargeCategory, abnormalDetail, codeSourceDistributor, codeSourceWar, codeSourceChannel, scanOutDistributor, scanOutWar, scanOutChannel, list) {
+            let operateRow = _this.$store.state['abnormalScanSuperviseList'].operateRow;
+            this.operateRow = operateRow;
+            this.codeSourceDistributor = operateRow.distributor;
+            this.codeSourceWar = operateRow.warBelong;
+            this.codeSourceChannel = operateRow.channelBelong;
+            this.$http.all([this.getAbnormalLargeCategoryList(), this.getAbnormalDetailList(), this.getScanOutDistributorList(), this.getScanOutWarList(), this.getScanOutChannelList(), this.getDetailList()])
+                .then(this.$http.spread(function (abnormalLargeCategory, abnormalDetail, scanOutDistributor, scanOutWar, scanOutChannel, list) {
                     _this.tableData = list.data.data.list;
                     _this.tableTotal = list.data.data.total;
                     _this.abnormalLargeCategoryList = abnormalLargeCategory.data.data;
                     _this.abnormalDetailList = abnormalDetail.data.data;
-                    _this.codeSourceDistributorList = codeSourceDistributor.data.data;
-                    _this.codeSourceWarList = codeSourceWar.data.data;
-                    _this.codeSourceChannelList = codeSourceChannel.data.data;
                     _this.scanOutDistributorList = scanOutDistributor.data.data;
                     _this.scanOutWarList = scanOutWar.data.data;
                     _this.scanOutChannelList = scanOutChannel.data.data;
@@ -396,11 +383,8 @@
                 codeSourceDistributor: '',
                 codeSourceDistributorList: '',
                 codeSourceWar: '',
-                codeSourceWarList: [],
                 codeSourceChannel: '',
-                codeSourceChannelList: [],
                 scanOutDistributor: '',
-                scanOutDistributorList: [],
                 scanOutWar: '',
                 scanOutWarList: [],
                 scanOutChannel: '',
@@ -413,6 +397,7 @@
                 tableTotal: 0,
                 routerToNum: 1,
                 /** 分页配置结束 */
+                operateRow: {},
                 currentData: {},
                 tableData: []
             }
@@ -459,9 +444,6 @@
                 this.abnormalDetail = '';
                 this.warIsCheck = '';
                 this.isSupervise = '';
-                this.codeSourceDistributor = '';
-                this.codeSourceWar = '';
-                this.codeSourceChannel = '';
                 this.scanOutDistributor = '';
                 this.scanOutWar = '';
                 this.scanOutChannel = '';
@@ -558,45 +540,6 @@
                     },
                 });
             },
-            getCodeSourceChannelList: function () {
-                return this.$http.post("/api/ddadapter/openApi/data", {
-                    "code": "13",
-                    "data": {
-                        expDistributorId: this.expDistributorId,
-                        userid: sessionStorage.userid
-                    }
-                }, {
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                });
-            },
-            getCodeSourceWarList: function () {
-                return this.$http.post("/api/ddadapter/openApi/data", {
-                    "code": "12",
-                    "data": {
-                        expDistributorId: this.expDistributorId,
-                        userid: sessionStorage.userid
-                    }
-                }, {
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                });
-            },
-            getCodeSourceDistributorList: function () {
-                return this.$http.post("/api/ddadapter/openApi/data", {
-                    "code": "11",
-                    "data": {
-                        expDistributorId: this.expDistributorId,
-                        userid: sessionStorage.userid
-                    }
-                }, {
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                });
-            },
             getAbnormalDetailList: function () {
                 return this.$http.post("/api/ddadapter/openApi/data", {
                     "code": "10",
@@ -641,12 +584,6 @@
                             warIsCheck: this.warIsCheck,
                             //是否督导
                             isSupervise: this.isSupervise,
-                            //码源经销商
-                            codeSourceDistributor: this.codeSourceDistributor,
-                            //码源战区
-                            codeSourceWar: this.codeSourceWar,
-                            //码源渠道
-                            codeSourceChannel: this.codeSourceChannel,
                             //扫码出库经销商
                             scanOutDistributor: this.scanOutDistributor,
                             //扫码出库战区

@@ -353,6 +353,7 @@
 
     .searchLabel.disabled {
         cursor: not-allowed;
+        color: #C3C7D0;
     }
 
     .searchLabel.empty, .searchLabel.empty .iconweibiaoti--3 {

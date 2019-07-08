@@ -822,6 +822,10 @@
                 this.routerToNum = result;
             },
             handleClick: function (row) {
+                this.$store.commit('saveOperateRow', {
+                    module: this.searchData.currentRouterName,
+                    operateRow: row
+                });
                 this.$router.push(
                     {
                         name: 'abnormalScanSuperviseList/listDetail',
