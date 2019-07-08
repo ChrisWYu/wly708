@@ -12,6 +12,7 @@ const state = {
         pageSize: 10,
         currentPage: 1,
         searchData: {},
+        searchUseData: {},
         scrollY: 0,
     },
 }
@@ -35,6 +36,9 @@ const mutations = {
     },
     saveSearchData(state, params) {
         state[params['currentRouterName']].searchData = params;
+    },
+    saveSearchUseData(state, params) {
+        state[params['currentRouterName']].searchUseData = params;
     },
     INCREMENT(state) {
         state.count++

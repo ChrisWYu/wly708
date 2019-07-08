@@ -335,6 +335,10 @@
                 this.searchData.warCheck = sessionStorage.warcode;
             }
             this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
+            let searchUseData = _this.$store.state[_this.searchUseData.currentRouterName].searchUseData;
+            for (let ke in searchUseData) {
+                _this.searchUseData[ke] = searchUseData[ke];
+            }
             this.$http.all([this.getWarCheckList(), this.getWarBelongList(), this.getDistributorList(), this.getList()])
                 .then(this.$http.spread((war, warBelong, distributor, list) => {
                     _this.tableData = list.data.data.list;
@@ -358,6 +362,7 @@
         },
         beforeDestroy() {
             this.$store.commit('saveSearchData', this.searchData);
+            this.$store.commit('saveSearchUseData', this.searchData);
             this.$store.commit('scrollToY', {module: this.searchData.currentRouterName, scrollY: this.scrollInfo['y']});
             EventUtil.remove(window, 'scroll', this.windowScroll);
         },
@@ -383,6 +388,25 @@
                 scrollInfo: {},
                 /** 查询条件开始 */
                 searchData: {
+                    currentRouterName: JSON.parse(JSON.stringify(this.$route.name)),
+                    warCheck: '',
+                    warCharge: '',
+                    warChargeValue: '',
+                    warOperator: '',
+                    warOperatorValue: '',
+                    superviseCharge: '',
+                    superviseChargeValue: '',
+                    checkStatus: '',
+                    superviseStatus: '',
+                    warBelong: '',
+                    distributor: '',
+                    abnormalLargeCategory: '',
+                    abnormalSmallCategory: '',
+                    createDate: [],
+                    assignDate: [],
+                    endDate: [],
+                },
+                searchUseData: {
                     currentRouterName: JSON.parse(JSON.stringify(this.$route.name)),
                     warCheck: '',
                     warCharge: '',
@@ -710,10 +734,10 @@
                 return codeResult[obj];
             },
             searchDataClick: function () {
+                this.searchUseData = JSON.parse(JSON.stringify(this.searchData));
                 this.currentChange(1);
             },
             clearRowSearch(t) {
-                console.log(t);
                 for (let i = 0; i < t.length; i++) {
                     this.searchData[t[i]] = '';
                 }
@@ -721,22 +745,38 @@
             clearDataClick: function () {
                 if (this.userLevel == 'D' || this.userLevel == 'DE') {
                     this.searchData.warCheck = '';
+                    this.searchUseData.warCheck = '';
                 }
                 this.searchData.warCharge = '';
+                this.searchUseData.warCharge = '';
                 this.searchData.warChargeValue = '';
+                this.searchUseData.warChargeValue = '';
                 this.searchData.warOperator = '';
+                this.searchUseData.warOperator = '';
                 this.searchData.warOperatorValue = '';
+                this.searchUseData.warOperatorValue = '';
                 this.searchData.superviseCharge = '';
+                this.searchUseData.superviseCharge = '';
                 this.searchData.superviseChargeValue = '';
+                this.searchUseData.superviseChargeValue = '';
                 this.searchData.checkStatus = '';
+                this.searchUseData.checkStatus = '';
                 this.searchData.superviseStatus = '';
+                this.searchUseData.superviseStatus = '';
                 this.searchData.warBelong = '';
+                this.searchUseData.warBelong = '';
                 this.searchData.distributor = '';
+                this.searchUseData.distributor = '';
                 this.searchData.abnormalLargeCategory = '';
+                this.searchUseData.abnormalLargeCategory = '';
                 this.searchData.abnormalSmallCategory = '';
+                this.searchUseData.abnormalSmallCategory = '';
                 this.searchData.createDate = [];
+                this.searchUseData.createDate = [];
                 this.searchData.assignDate = [];
+                this.searchUseData.assignDate = [];
                 this.searchData.endDate = [];
+                this.searchUseData.endDate = [];
             },
             handleRouterTo: function () {
                 let routerToNum = JSON.parse(JSON.stringify(this.routerToNum));
@@ -876,31 +916,31 @@
                             //每页条数
                             pageSize: this.pageSize,
                             //核查战区
-                            warCheck: this.searchData.warCheck,
+                            warCheck: this.searchUseData.warCheck,
                             //战区负责人
-                            warCharge: this.searchData.warChargeValue,
+                            warCharge: this.searchUseData.warChargeValue,
                             //战区执行人
-                            warOperator: this.searchData.warOperatorValue,
+                            warOperator: this.searchUseData.warOperatorValue,
                             //督导负责人
-                            superviseCharge: this.searchData.superviseChargeValue,
+                            superviseCharge: this.searchUseData.superviseChargeValue,
                             //核查情况
-                            checkStatus: this.searchData.checkStatus,
+                            checkStatus: this.searchUseData.checkStatus,
                             //督导情况
-                            superviseStatus: this.searchData.superviseStatus,
+                            superviseStatus: this.searchUseData.superviseStatus,
                             //所属战区
-                            warBelong: this.searchData.warBelong,
+                            warBelong: this.searchUseData.warBelong,
                             //经销商
-                            distributor: this.searchData.distributor,
+                            distributor: this.searchUseData.distributor,
                             //异常大类
-                            abnormalLargeCategory: this.searchData.abnormalLargeCategory,
+                            abnormalLargeCategory: this.searchUseData.abnormalLargeCategory,
                             //异常小类
-                            abnormalSmallCategory: this.searchData.abnormalSmallCategory,
+                            abnormalSmallCategory: this.searchUseData.abnormalSmallCategory,
                             //创建日期
-                            createDate: this.searchData.createDate,
+                            createDate: this.searchUseData.createDate,
                             //分派日期
-                            assignDate: this.searchData.assignDate,
+                            assignDate: this.searchUseData.assignDate,
                             //截止日期
-                            endDate: this.searchData.endDate,
+                            endDate: this.searchUseData.endDate,
                             //用户id
                             userid: sessionStorage.userid
                         }
