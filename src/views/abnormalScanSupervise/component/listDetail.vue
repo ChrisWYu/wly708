@@ -2,14 +2,27 @@
     <div class="bodyContent">
         <div class="contentDetail">
             <div class="row">
-                <div class="rowInline">
-                    <p class="title">物流码</p>
-                    <el-input
-                            class="expandInput"
-                            placeholder="请输入"
-                            v-model="logisticsCode">
-                    </el-input>
+                <div class="rowInline" style="vertical-align: top">
+                    <p class="title">码源经销商</p>
+                    <div class="searchLabel disabled has">
+                        {{codeSourceDistributor}}
+                        <i class="icon iconfont iconweibiaoti--3"></i>
+                    </div>
                 </div>
+                <div class="rowInline" style="vertical-align: top">
+                    <p class="title">码源战区</p>
+                    <div class="searchLabel disabled has">
+                        {{codeSourceWar}}
+                        <i class="icon iconfont iconweibiaoti--3"></i>
+                    </div>
+                </div>
+                <!--<div class="rowInline" style="vertical-align: top">-->
+                <!--<p class="title">码源渠道</p>-->
+                <!--<div class="searchLabel disabled has">-->
+                <!--{{codeSourceChannel}}-->
+                <!--<i class="icon iconfont iconweibiaoti&#45;&#45;3"></i>-->
+                <!--</div>-->
+                <!--</div>-->
                 <div class="rowInline">
                     <p class="title">异常大类</p>
                     <el-select class="expandSelect" v-model="abnormalLargeCategory" placeholder="请选择"
@@ -34,53 +47,16 @@
                         </el-option>
                     </el-select>
                 </div>
-                <div class="rowInline">
-                    <p class="title">战区是否核查</p>
-                    <el-select class="expandSelect" v-model="warIsCheck" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in warIsCheckList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
             </div>
             <div class="row">
                 <div class="rowInline">
-                    <p class="title">是否督导</p>
-                    <el-select class="expandSelect" v-model="isSupervise" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in isSuperviseList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
+                    <p class="title">物流码</p>
+                    <el-input
+                            class="expandInput"
+                            placeholder="请输入"
+                            v-model="logisticsCode">
+                    </el-input>
                 </div>
-                <div class="rowInline" style="vertical-align: top">
-                    <p class="title">码源经销商</p>
-                    <div class="searchLabel disabled has">
-                        {{codeSourceDistributor}}
-                        <i class="icon iconfont iconweibiaoti--3"></i>
-                    </div>
-                </div>
-                <div class="rowInline" style="vertical-align: top">
-                    <p class="title">码源战区</p>
-                    <div class="searchLabel disabled has">
-                        {{codeSourceWar}}
-                        <i class="icon iconfont iconweibiaoti--3"></i>
-                    </div>
-                </div>
-                <!--<div class="rowInline" style="vertical-align: top">-->
-                <!--<p class="title">码源渠道</p>-->
-                <!--<div class="searchLabel disabled has">-->
-                <!--{{codeSourceChannel}}-->
-                <!--<i class="icon iconfont iconweibiaoti&#45;&#45;3"></i>-->
-                <!--</div>-->
-                <!--</div>-->
                 <div class="rowInline">
                     <p class="title">扫码出库经销商</p>
                     <el-select class="expandSelect" v-model="scanOutDistributor" placeholder="请选择"
@@ -93,8 +69,6 @@
                         </el-option>
                     </el-select>
                 </div>
-            </div>
-            <div class="row">
                 <div class="rowInline">
                     <p class="title">扫码出库战区</p>
                     <el-select class="expandSelect" v-model="scanOutWar" placeholder="请选择"
@@ -113,6 +87,32 @@
                                :clearable="clearable">
                         <el-option
                                 v-for="item in scanOutChannelList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="rowInline">
+                    <p class="title">是否核查</p>
+                    <el-select class="expandSelect" v-model="warIsCheck" placeholder="请选择"
+                               :clearable="clearable">
+                        <el-option
+                                v-for="item in warIsCheckList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div class="rowInline">
+                    <p class="title">是否督导</p>
+                    <el-select class="expandSelect" v-model="isSupervise" placeholder="请选择"
+                               :clearable="clearable">
+                        <el-option
+                                v-for="item in isSuperviseList"
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.id">
@@ -180,10 +180,10 @@
                         label="扫码出库渠道">
                 </el-table-column>
                 <!--<el-table-column-->
-                        <!--show-overflow-tooltip-->
-                        <!--width="145"-->
-                        <!--prop="scanOutNumber"-->
-                        <!--label="扫码出库单号">-->
+                <!--show-overflow-tooltip-->
+                <!--width="145"-->
+                <!--prop="scanOutNumber"-->
+                <!--label="扫码出库单号">-->
                 <!--</el-table-column>-->
                 <el-table-column
                         show-overflow-tooltip
