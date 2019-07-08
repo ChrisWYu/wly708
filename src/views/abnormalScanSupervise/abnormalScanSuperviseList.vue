@@ -140,7 +140,7 @@
             <div class="row">
                 <div class="rowInline">
                     <p class="title">督导负责人</p>
-                    <div class="searchLabel" :class="searchData.superviseCharge ?'has' :'empty'"
+                    <div :class="superviseChargeClass()"
                          @click="getDdSuperviseCharge()">
                         {{searchData.superviseCharge? searchData.superviseCharge :'请选择' }}
                         <i class="icon iconfont iconweibiaoti--3"
@@ -197,7 +197,8 @@
                     style="width: 100%;margin-top: 16px;">
                 <el-table-column
                         type="selection"
-                        width="35">
+                        width="35"
+                >
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
@@ -221,7 +222,7 @@
                         show-overflow-tooltip
                         width="115"
                         align="center"
-                        label="异常情况">
+                        label="异常数">
                     <template slot-scope="scope">
                         <el-tooltip class="item" effect="dark" placement="top">
                             <template slot="content">
@@ -340,6 +341,12 @@
                 this.searchUseData.warOperatorValue = sessionStorage.userid;
                 this.searchData.warOperator = sessionStorage.username;
                 this.searchUseData.warOperator = sessionStorage.username;
+            }
+            if (this.userLevel == 'DE') {
+                this.searchData.superviseCharge = sessionStorage.username;
+                this.searchUseData.superviseCharge = sessionStorage.username;
+                this.searchData.superviseChargeValue = sessionStorage.userid;
+                this.searchUseData.superviseChargeValue = sessionStorage.userid;
             }
             this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
             let searchUseData = _this.$store.state[_this.searchUseData.currentRouterName].searchUseData;
@@ -545,11 +552,20 @@
             messagePrompt: function (way, info) {
                 this.loadingCancel();
                 this.$message({message: info, type: way});
+                this.getListInfo();
             },
             warOperatorClass() {
                 let temp_class = 'searchLabel';
                 temp_class += this.searchData.warOperator ? ' has' : ' empty';
                 if (this.userLevel == 'B' || this.userLevel == 'E' || this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE') {
+                    temp_class += ' disabled';
+                }
+                return temp_class;
+            },
+            superviseChargeClass() {
+                let temp_class = 'searchLabel';
+                temp_class += this.searchData.superviseCharge ? ' has' : ' empty';
+                if (this.userLevel == 'DE') {
                     temp_class += ' disabled';
                 }
                 return temp_class;
@@ -601,7 +617,9 @@
                 this.searchData.warChargeValue = users.emplId;
             },
             getDdSuperviseCharge() {
-                this.getddPersonInfo('changeSearchSuperviseCharge');
+                if (!this.userLevel == 'DE') {
+                    this.getddPersonInfo('changeSearchSuperviseCharge');
+                }
             },
             changeSearchSuperviseCharge(userInfo) {
                 let users = userInfo.users[0];
@@ -709,14 +727,18 @@
                 this.searchUseData.warCharge = '';
                 this.searchData.warChargeValue = '';
                 this.searchUseData.warChargeValue = '';
-                this.searchData.warOperator = '';
-                this.searchUseData.warOperator = '';
-                this.searchData.warOperatorValue = '';
-                this.searchUseData.warOperatorValue = '';
-                this.searchData.superviseCharge = '';
-                this.searchUseData.superviseCharge = '';
-                this.searchData.superviseChargeValue = '';
-                this.searchUseData.superviseChargeValue = '';
+                if (!(this.userLevel == 'B' || this.userLevel == 'E' || this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE')) {
+                    this.searchData.warOperator = '';
+                    this.searchUseData.warOperator = '';
+                    this.searchData.warOperatorValue = '';
+                    this.searchUseData.warOperatorValue = '';
+                }
+                if (!this.userLevel == 'DE') {
+                    this.searchData.superviseCharge = '';
+                    this.searchUseData.superviseCharge = '';
+                    this.searchData.superviseChargeValue = '';
+                    this.searchUseData.superviseChargeValue = '';
+                }
                 this.searchData.checkStatus = '';
                 this.searchUseData.checkStatus = '';
                 this.searchData.superviseStatus = '';
@@ -888,9 +910,9 @@
                             //创建日期
                             createDate: this.searchUseData.createDate,
                             //分派日期
-                            assignDate: this.searchUseData.assignDate,
+                            checkStartTime: this.searchUseData.assignDate,
                             //截止日期
-                            endDate: this.searchUseData.endDate,
+                            checkEndTime: this.searchUseData.endDate,
                             //用户id
                             userid: sessionStorage.userid
                         }

@@ -5,4 +5,5 @@ node_modules中_dingtalk-auth 请求更改为post
 
 
 问题
-详情提取到searchData中 做 查询条件时 分离
+1.选择框数据保存
+6.权限文件生效问题

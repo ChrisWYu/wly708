@@ -116,45 +116,54 @@
 </script>
 <style>
     /** 表格公用样式开始 */
-    .el-input.is-focus .el-input__inner, .el-input__inner:focus {
+    #app .el-input.is-focus .el-input__inner, #app .el-input__inner:focus {
         border-color: #F13D3D !important;
     }
 
-    .el-table__empty-text {
+    #app .el-table__empty-text {
         color: #333333;
     }
 
-    .el-table th, .el-table td {
+    #app .el-table th, #app .el-table td {
         padding: 10px 0;
     }
 
-    .el-table--group, .el-table--border, .el-table th.is-leaf, .el-table td {
+    #app .el-table--group, #app .el-table--border, #app .el-table th.is-leaf, #app .el-table td {
         border-color: #D0D0D0;
     }
 
-    .el-table .cell {
+    #app .el-table--group::after, #app .el-table--border::after, #app .el-table::before {
+        background-color: #D0D0D0;
+    }
+
+    #app .el-table .cell {
         padding: 0 20px;
     }
 
-    .el-table thead tr {
+    #app .el-table .el-table-column--selection .cell {
+        padding: 0;
+        text-align: center;
+    }
+
+    #app .el-table thead tr {
         background-color: #F4F7FB;
         color: #333333;
         font-size: 16px;
     }
 
-    .el-table thead th {
+    #app .el-table thead th {
         background-color: unset;
     }
 
-    .el-pagination, .el-pagination__total, .el-pagination .btn-prev, .el-pagination .btn-next, .el-input__inner {
+    #app .el-pagination, #app .el-pagination__total, #app .el-pagination .btn-prev, #app .el-pagination .btn-next, #app .el-input__inner {
         color: #9B9B9B;
     }
 
-    .el-pagination__sizes {
+    #app .el-pagination__sizes {
         margin-right: 21px;
     }
 
-    .el-pagination .el-input__suffix {
+    #app .el-pagination .el-input__suffix {
         right: -2px;
         height: 32px;
         width: 32px;
@@ -162,16 +171,16 @@
         background-color: #F13D3D;
     }
 
-    .el-pagination .el-select .el-input .el-select__caret {
+    #app .el-pagination .el-select .el-input .el-select__caret {
         font-size: 22px;
         color: #ffffff;
     }
 
-    .el-pagination .el-select .el-input {
+    #app .el-pagination .el-select .el-input {
         width: 80px;
     }
 
-    .el-pagination .el-select .el-input .el-input__inner {
+    #app .el-pagination .el-select .el-input .el-input__inner {
         text-align: left;
     }
 
@@ -183,7 +192,7 @@
     /*vertical-align: middle;*/
     /*}*/
 
-    .el-pager li {
+    #app .el-pager li {
         font-size: 12px;
         padding: 0;
         min-width: 24px;
@@ -193,33 +202,33 @@
         border-radius: 4px;
     }
 
-    .el-pager li:hover {
+    #app .el-pager li:hover {
         color: #F13D3D;
     }
 
-    .el-pager li.active {
+    #app .el-pager li.active {
         background-color: #F13D3D;
         color: #ffffff;
     }
 
-    .el-pagination .btn-prev, .el-pagination .btn-next {
+    #app .el-pagination .btn-prev, .el-pagination .btn-next {
         padding-top: 2px;
         font-size: 18px;
     }
 
-    .el-pagination {
+    #app .el-pagination {
         margin-top: 9px;
         text-align: right;
         padding: 0 5px;
     }
 
-    .el-pagination .routerTo {
+    #app .el-pagination .routerTo {
         display: inline-block;
         margin-left: 20px;
         padding-top: 2px;
     }
 
-    .el-pagination .routerTo .routerToButton {
+    #app .el-pagination .routerTo .routerToButton {
         text-align: center;
         cursor: pointer;
         display: inline-block;
@@ -234,13 +243,13 @@
         border-bottom-right-radius: 4px;
     }
 
-    .el-pagination .routerTo .routerToInput {
+    #app .el-pagination .routerTo .routerToInput {
         width: 36px;
         height: 28px;
         float: left;
     }
 
-    .el-pagination .routerTo .routerToInput .el-input__inner {
+    #app .el-pagination .routerTo .routerToInput .el-input__inner {
         height: 28px;
         line-height: 28px;
         border-top-right-radius: 0;
@@ -249,7 +258,7 @@
     }
 
     /** 表格公用样式结束 */
-    .el-menu-item {
+    #app .el-menu-item {
         height: 44px;
         line-height: 44px;
         margin: 21px 10px 0;
@@ -260,31 +269,31 @@
         font-family: "PingFang SC";
     }
 
-    .el-menu-item.is-active {
+    #app .el-menu .el-menu-item.is-active, #app .el-menu .el-menu-item.is-active:hover {
         background-color: rgba(241, 61, 61, 1);
         color: #FFFFFF;
     }
 
-    .el-header {
+    #app .el-header {
         background-color: #DF0615;
         color: #333;
         line-height: 56px;
         height: 56px !important;
     }
 
-    .el-menu-item-group > div {
+    #app .el-menu-item-group > div {
         padding: 0 !important;
     }
 
-    .el-aside {
+    #app .el-aside {
         border-right: solid 1px #e6e6e6;
     }
 
-    .el-menu {
+    #app .el-menu {
         border-right: 0;
     }
 
-    .el-tooltip__popper.is-dark {
+    #app .el-tooltip__popper.is-dark {
         background: rgba(39, 45, 51, 0.7);
     }
 

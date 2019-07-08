@@ -34,6 +34,7 @@
         props: ['currentData'],
         mounted() {
             this.date = (new Date()).toLocaleDateString();
+            this.describe = JSON.parse(JSON.stringify(this.currentData.superviseResult))
         },
         components: {
             loading
@@ -52,6 +53,7 @@
                 this.loadingCancel();
                 this.$message({message: info, type: way});
                 if (way === 'success') {
+                    this.$parent.getListInfo();
                     this.close();
                 }
             },

@@ -72,31 +72,31 @@
                     </el-select>
                 </div>
                 <div class="rowInline">
-                    <p class="title">扫码出库渠道</p>
-                    <el-select class="expandSelect" v-model="searchData.scanOutChannel" placeholder="请选择"
+                    <p class="title">是否核查</p>
+                    <el-select class="expandSelect" v-model="searchData.isWarCheck" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
-                                v-for="item in scanOutChannelList"
+                                v-for="item in isWarCheckList"
                                 :key="item.id"
                                 :label="item.name"
                                 :value="item.id">
                         </el-option>
                     </el-select>
                 </div>
+                <!--<div class="rowInline">-->
+                <!--<p class="title">扫码出库渠道</p>-->
+                <!--<el-select class="expandSelect" v-model="searchData.scanOutChannel" placeholder="请选择"-->
+                <!--:clearable="clearable">-->
+                <!--<el-option-->
+                <!--v-for="item in scanOutChannelList"-->
+                <!--:key="item.id"-->
+                <!--:label="item.name"-->
+                <!--:value="item.id">-->
+                <!--</el-option>-->
+                <!--</el-select>-->
+                <!--</div>-->
             </div>
             <div class="row">
-                <div class="rowInline">
-                    <p class="title">是否核查</p>
-                    <el-select class="expandSelect" v-model="searchData.warIsCheck" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in warIsCheckList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </div>
                 <div class="rowInline">
                     <p class="title">是否督导</p>
                     <el-select class="expandSelect" v-model="searchData.isSupervise" placeholder="请选择"
@@ -125,7 +125,8 @@
                     style="width: 100%;margin-top: 16px;">
                 <el-table-column
                         type="selection"
-                        width="35">
+                        width="35"
+                >
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
@@ -133,18 +134,18 @@
                         label="物流码"
                         width="140">
                 </el-table-column>
-                <el-table-column
-                        show-overflow-tooltip
-                        prop="codeSourceDistributor"
-                        label="码源经销商"
-                        width="140">
-                </el-table-column>
-                <el-table-column
-                        show-overflow-tooltip
-                        width="120"
-                        prop="codeSourceWar"
-                        label="码源战区">
-                </el-table-column>
+                <!--<el-table-column-->
+                <!--show-overflow-tooltip-->
+                <!--prop="codeSourceDistributor"-->
+                <!--label="码源经销商"-->
+                <!--width="140">-->
+                <!--</el-table-column>-->
+                <!--<el-table-column-->
+                <!--show-overflow-tooltip-->
+                <!--width="120"-->
+                <!--prop="codeSourceWar"-->
+                <!--label="码源战区">-->
+                <!--</el-table-column>-->
                 <el-table-column
                         show-overflow-tooltip
                         width="140"
@@ -196,7 +197,7 @@
                 <el-table-column
                         show-overflow-tooltip
                         width="400"
-                        prop="abnormalDetail"
+                        prop="abnormalSmallCategory"
                         label="异常明细">
                 </el-table-column>
                 <el-table-column
@@ -246,7 +247,7 @@
                              @click="checkOne(scope.row)"><i
                                 class="icon iconfont iconweibiaoti--5"></i>
                             <p>核查</p></div>
-                        <div v-if="userLevel == 'DE'" style="margin-left: 18px;" class="tableButtons"
+                        <div v-if="userLevel == 'DE'" class="tableButtons"
                              @click="superviseOne(scope.row)"><i
                                 class="icon iconfont iconweibiaoti--6"></i>
                             <p>督导</p></div>
@@ -344,7 +345,7 @@
                     logisticsCode: '',
                     abnormalLargeCategory: '',
                     abnormalSmallCategory: '',
-                    warIsCheck: '',
+                    isWarCheck: '',
                     isSupervise: '',
                     scanOutDistributor: '',
                     scanOutWar: '',
@@ -354,7 +355,7 @@
                     logisticsCode: '',
                     abnormalLargeCategory: '',
                     abnormalSmallCategory: '',
-                    warIsCheck: '',
+                    isWarCheck: '',
                     isSupervise: '',
                     scanOutDistributor: '',
                     scanOutWar: '',
@@ -364,23 +365,23 @@
                 codeSourceWar: '',
                 codeSourceChannel: '',
                 abnormalSmallCategoryList: [],
-                warIsCheckList: [
+                isWarCheckList: [
                     {
-                        id: 1,
+                        id: 2,
                         name: '是'
                     },
                     {
-                        id: 2,
+                        id: 1,
                         name: '否'
                     }
                 ],
                 isSuperviseList: [
                     {
-                        id: 1,
+                        id: 2,
                         name: '是'
                     },
                     {
-                        id: 2,
+                        id: 1,
                         name: '否'
                     }
                 ],
@@ -458,7 +459,7 @@
                 this.searchData.logisticsCode = '';
                 this.searchData.abnormalLargeCategory = '';
                 this.searchData.abnormalSmallCategory = '';
-                this.searchData.warIsCheck = '';
+                this.searchData.isWarCheck = '';
                 this.searchData.isSupervise = '';
                 this.searchData.scanOutDistributor = '';
                 this.searchData.scanOutWar = '';
@@ -467,7 +468,7 @@
                 this.searchUseData.logisticsCode = '';
                 this.searchUseData.abnormalLargeCategory = '';
                 this.searchUseData.abnormalSmallCategory = '';
-                this.searchUseData.warIsCheck = '';
+                this.searchUseData.isWarCheck = '';
                 this.searchUseData.isSupervise = '';
                 this.searchUseData.scanOutDistributor = '';
                 this.searchUseData.scanOutWar = '';
@@ -582,7 +583,7 @@
                             //异常明细
                             abnormalSmallCategory: this.searchUseData.abnormalSmallCategory,
                             //战区是否核查
-                            warIsCheck: this.searchUseData.warIsCheck,
+                            isWarCheck: this.searchUseData.isWarCheck,
                             //是否督导
                             isSupervise: this.searchUseData.isSupervise,
                             //扫码出库经销商

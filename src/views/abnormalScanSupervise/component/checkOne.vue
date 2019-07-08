@@ -52,6 +52,7 @@
                 this.loadingCancel();
                 this.$message({message: info, type: way});
                 if (way === 'success') {
+                    this.$parent.getListInfo();
                     this.close();
                 }
             },
