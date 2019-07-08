@@ -715,7 +715,17 @@
             },
             clearRowSearch(t) {
                 for (let i = 0; i < t.length; i++) {
-                    this.searchData[t[i]] = '';
+                    if (t[i] == 'warOperator' || t[i] == 'warOperatorValue') {
+                        if (!(this.userLevel == 'B' || this.userLevel == 'E' || this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE')) {
+                            this.searchData[t[i]] = '';
+                        }
+                    }else if(t[i] == 'superviseCharge' || t[i] == 'superviseChargeValue'){
+                        if(!this.userLevel == 'DE'){
+                            this.searchData[t[i]] = '';
+                        }
+                    } else {
+                        this.searchData[t[i]] = '';
+                    }
                 }
             },
             clearDataClick: function () {

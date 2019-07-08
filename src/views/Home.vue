@@ -383,7 +383,7 @@
         border: 1px solid #C0C4CC;
     }
 
-    .searchLabel.has .iconweibiaoti--3:hover:before {
+    .searchLabel.has:not(.disabled) .iconweibiaoti--3:hover:before {
         font-family: "element-icons" !important;
         content: "\e78d";
     }
