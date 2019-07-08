@@ -6,14 +6,12 @@
                     <p class="title">码源经销商</p>
                     <div class="searchLabel disabled has">
                         {{codeSourceDistributor}}
-                        <i class="icon iconfont iconweibiaoti--3"></i>
                     </div>
                 </div>
                 <div class="rowInline" style="vertical-align: top">
                     <p class="title">码源战区</p>
                     <div class="searchLabel disabled has">
                         {{codeSourceWar}}
-                        <i class="icon iconfont iconweibiaoti--3"></i>
                     </div>
                 </div>
                 <!--<div class="rowInline" style="vertical-align: top">-->
@@ -26,7 +24,7 @@
                 <div class="rowInline">
                     <p class="title">异常大类</p>
                     <el-select class="expandSelect" v-model="abnormalLargeCategory" placeholder="请选择"
-                               :clearable="clearable">
+                               :clearable="clearable" @change="getAbnormalSmallCategoryList">
                         <el-option
                                 v-for="item in abnormalLargeCategoryList"
                                 :key="item.id"
@@ -37,13 +35,13 @@
                 </div>
                 <div class="rowInline">
                     <p class="title">异常明细</p>
-                    <el-select class="expandSelect" v-model="abnormalDetail" placeholder="请选择"
+                    <el-select class="expandSelect" v-model="abnormalSmallCategory" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
-                                v-for="item in abnormalDetailList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
+                                v-for="item in abnormalSmallCategoryList"
+                                :key="item.abnormal_detail_name"
+                                :label="item.abnormal_detail_name"
+                                :value="item.abnormal_detail_code">
                         </el-option>
                     </el-select>
                 </div>
@@ -59,15 +57,7 @@
                 </div>
                 <div class="rowInline">
                     <p class="title">扫码出库经销商</p>
-                    <el-select class="expandSelect" v-model="scanOutDistributor" placeholder="请选择"
-                               :clearable="clearable">
-                        <el-option
-                                v-for="item in scanOutDistributorList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
+                    <el-input v-model="scanOutDistributor" placeholder="请输入"></el-input>
                 </div>
                 <div class="rowInline">
                     <p class="title">扫码出库战区</p>
@@ -75,9 +65,9 @@
                                :clearable="clearable">
                         <el-option
                                 v-for="item in scanOutWarList"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
+                                :key="item.war_code"
+                                :label="item.war_name"
+                                :value="item.war_code">
                         </el-option>
                     </el-select>
                 </div>
@@ -120,8 +110,8 @@
                     </el-select>
                 </div>
                 <div class="rowInline" style="white-space: nowrap;">
-                    <div class="cusButton cusRed" @click="searchData">查询</div>
-                    <div class="cusButton cusWhite" @click="clearData" style="margin-left: 20px;">重置</div>
+                    <div class="cusButton cusRed" @click="searchDataClick">查询</div>
+                    <div class="cusButton cusWhite" @click="clearDataClick" style="margin-left: 20px;">重置</div>
                 </div>
             </div>
             <hr style="margin-top: 10px; height:2px;border:none;border-top:2px dotted rgb(238,238,238);"/>
@@ -318,13 +308,10 @@
             this.codeSourceDistributor = operateRow.distributor;
             this.codeSourceWar = operateRow.warBelong;
             this.codeSourceChannel = operateRow.channelBelong;
-            this.$http.all([this.getAbnormalLargeCategoryList(), this.getAbnormalDetailList(), this.getScanOutDistributorList(), this.getScanOutWarList(), this.getScanOutChannelList(), this.getDetailList()])
-                .then(this.$http.spread(function (abnormalLargeCategory, abnormalDetail, scanOutDistributor, scanOutWar, scanOutChannel, list) {
+            this.$http.all([this.getScanOutWarList(), this.getScanOutChannelList(), this.getDetailList()])
+                .then(this.$http.spread(function (scanOutWar, scanOutChannel, list) {
                     _this.tableData = list.data.data.list;
                     _this.tableTotal = list.data.data.total;
-                    _this.abnormalLargeCategoryList = abnormalLargeCategory.data.data;
-                    _this.abnormalDetailList = abnormalDetail.data.data;
-                    _this.scanOutDistributorList = scanOutDistributor.data.data;
                     _this.scanOutWarList = scanOutWar.data.data;
                     _this.scanOutChannelList = scanOutChannel.data.data;
                     _this.loadingCancel();
@@ -353,11 +340,11 @@
                 clearable: true,
                 loadingStatus: false,
                 /** 查询条件开始 */
+                searchData: {},
                 logisticsCode: '',
                 abnormalLargeCategory: '',
-                abnormalLargeCategoryList: '',
-                abnormalDetail: '',
-                abnormalDetailList: '',
+                abnormalSmallCategory: '',
+                abnormalSmallCategoryList: [],
                 warIsCheck: '',
                 warIsCheckList: [
                     {
@@ -381,7 +368,7 @@
                     }
                 ],
                 codeSourceDistributor: '',
-                codeSourceDistributorList: '',
+                codeSourceDistributorList: [],
                 codeSourceWar: '',
                 codeSourceChannel: '',
                 scanOutDistributor: '',
@@ -389,6 +376,24 @@
                 scanOutWarList: [],
                 scanOutChannel: '',
                 scanOutChannelList: [],
+                abnormalLargeCategoryList: [
+                    {
+                        id: 'A',
+                        name: '作业层级异动',
+                    },
+                    {
+                        id: 'B',
+                        name: '跨渠道异动',
+                    },
+                    {
+                        id: 'C',
+                        name: '跨客户异动',
+                    },
+                    {
+                        id: 'D',
+                        name: '跨区域异动',
+                    }
+                ],
                 /** 查询条件结束 */
                 /** 分页配置开始 */
                 pageSize: 10,
@@ -435,13 +440,13 @@
                     name: 'abnormalScanSuperviseList'
                 });
             },
-            searchData: function () {
+            searchDataClick: function () {
                 this.currentChange(1);
             },
-            clearData: function () {
+            clearDataClick: function () {
                 this.logisticsCode = '';
                 this.abnormalLargeCategory = '';
-                this.abnormalDetail = '';
+                this.abnormalSmallCategory = '';
                 this.warIsCheck = '';
                 this.isSupervise = '';
                 this.scanOutDistributor = '';
@@ -515,10 +520,9 @@
                 });
             },
             getScanOutWarList: function () {
-                return this.$http.post("/api/ddadapter/openApi/data", {
-                    "code": "15",
+                return this.$http.post(`/api/ddadapter/openApi/data`, {
+                    "code": "00711ZI03",
                     "data": {
-                        expDistributorId: this.expDistributorId,
                         userid: sessionStorage.userid
                     }
                 }, {
@@ -527,43 +531,21 @@
                     },
                 });
             },
-            getScanOutDistributorList: function () {
-                return this.$http.post("/api/ddadapter/openApi/data", {
-                    "code": "14",
+            getAbnormalSmallCategoryList: function () {
+                this.abnormalSmallCategoryList = [];
+                // this.searchData.abnormalSmallCategory = '';
+                this.abnormalSmallCategory = '';
+                this.$http.post(`/api/ddadapter/openApi/data`, {
+                    "code": "00711ZI05",
                     "data": {
-                        expDistributorId: this.expDistributorId,
-                        userid: sessionStorage.userid
+                        abnormal_type: this.abnormalLargeCategory
                     }
                 }, {
                     headers: {
                         'content-type': 'application/json',
                     },
-                });
-            },
-            getAbnormalDetailList: function () {
-                return this.$http.post("/api/ddadapter/openApi/data", {
-                    "code": "10",
-                    "data": {
-                        expDistributorId: this.expDistributorId,
-                        userid: sessionStorage.userid
-                    }
-                }, {
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                });
-            },
-            getAbnormalLargeCategoryList: function () {
-                return this.$http.post("/api/ddadapter/openApi/data", {
-                    "code": "8",
-                    "data": {
-                        expDistributorId: this.expDistributorId,
-                        userid: sessionStorage.userid
-                    }
-                }, {
-                    headers: {
-                        'content-type': 'application/json',
-                    },
+                }).then(res => {
+                    this.abnormalSmallCategoryList = res.data.data;
                 });
             },
             getDetailList: function () {
@@ -579,7 +561,7 @@
                             //异常大类
                             abnormalLargeCategory: this.abnormalLargeCategory,
                             //异常明细
-                            abnormalDetail: this.abnormalDetail,
+                            abnormalSmallCategory: this.abnormalSmallCategory,
                             //战区是否核查
                             warIsCheck: this.warIsCheck,
                             //是否督导

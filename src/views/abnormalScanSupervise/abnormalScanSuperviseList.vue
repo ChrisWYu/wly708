@@ -37,7 +37,7 @@
                     </el-select>
                 </div>
                 <div class="rowInline">
-                    <p class="title">异常小类</p>
+                    <p class="title">异常明细</p>
                     <el-select class="expandSelect" v-model="searchData.abnormalSmallCategory" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
@@ -863,18 +863,6 @@
 
             },
             /** 数据请求开始 */
-            // getAbnormalSmallCategoryList: function () {
-            //     return this.$http.post(`/api/ddadapter/openApi/data`, {
-            //         "code": "8",
-            //         "data": {
-            //             userid: sessionStorage.userid
-            //         }
-            //     }, {
-            //         headers: {
-            //             'content-type': 'application/json',
-            //         },
-            //     });
-            // },
             getAbnormalSmallCategoryList: function () {
                 this.abnormalSmallCategoryList = [];
                 this.searchData.abnormalSmallCategory = '';
