@@ -81,7 +81,8 @@
                     }
                 ).then(res => {
                     let way = Number(res.data.statusCode) === 200 ? 'success' : 'error';
-                    this.messagePrompt(way, res.data.message)
+                    this.messagePrompt(way, res.data.message);
+                    this.$parent.getListInfo();
                 }, error => {
                     this.loadingCancel();
                     this.messagePrompt('error', '服务器错误！');

@@ -54,7 +54,7 @@
                     <p class="title">核查战区</p>
                     <el-select class="expandSelect" v-model="searchData.warCheck" placeholder="请选择"
                                :clearable="clearable"
-                               :disabled="userLevel != 'D' && userLevel != 'DE'">
+                               :disabled="userLevel != 'D' && userLevel != 'DE' && userLevel != 'X'">
                         <el-option
                                 v-for="item in warCheckList"
                                 :key="item.war_code"
@@ -332,7 +332,7 @@
             let _this = this;
             EventUtil.add(window, 'scroll', this.windowScroll);
             this.loadingShow();
-            if (this.userLevel != 'D' && this.userLevel != 'DE') {
+            if (this.userLevel != 'D' && this.userLevel != 'DE' && this.userLevel != 'X') {
                 this.searchData.warCheck = sessionStorage.warcode;
                 this.searchUseData.warCheck = sessionStorage.warcode;
             }
@@ -376,7 +376,7 @@
         },
         beforeDestroy() {
             this.$store.commit('saveSearchData', this.searchData);
-            this.$store.commit('saveSearchUseData', this.searchData);
+            this.$store.commit('saveSearchUseData', this.searchUseData);
             this.$store.commit('scrollToY', {module: this.searchData.currentRouterName, scrollY: this.scrollInfo['y']});
             EventUtil.remove(window, 'scroll', this.windowScroll);
         },
@@ -719,8 +719,8 @@
                         if (!(this.userLevel == 'B' || this.userLevel == 'E' || this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE')) {
                             this.searchData[t[i]] = '';
                         }
-                    }else if(t[i] == 'superviseCharge' || t[i] == 'superviseChargeValue'){
-                        if(!this.userLevel == 'DE'){
+                    } else if (t[i] == 'superviseCharge' || t[i] == 'superviseChargeValue') {
+                        if (!this.userLevel == 'DE') {
                             this.searchData[t[i]] = '';
                         }
                     } else {
@@ -729,7 +729,7 @@
                 }
             },
             clearDataClick: function () {
-                if (this.userLevel == 'D' || this.userLevel == 'DE') {
+                if (this.userLevel == 'D' || this.userLevel == 'DE' || this.userLevel == 'X') {
                     this.searchData.warCheck = '';
                     this.searchUseData.warCheck = '';
                 }

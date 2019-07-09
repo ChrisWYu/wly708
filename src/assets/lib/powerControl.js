@@ -11,6 +11,7 @@ export const powerControlLib = function (level, route) {
     let KE = 'KE'; //KA组员
     let T = 'T'; //电商组长
     let TE = 'TE'; //电商组员
+    let X = 'X'; //数据组
     switch (route) {
         case 'abnormalScanSuperviseList':
             buttonControl = {
@@ -21,6 +22,13 @@ export const powerControlLib = function (level, route) {
                 changeOperatorShow: false,//调整执行人
             };
             switch (level) {
+                case X:
+                    buttonControl.warAssignShow = false;//战区分派
+                    buttonControl.superviseAssignShow = false;//督导分派
+                    buttonControl.operatorAssignShow = false;//指派执行人
+                    buttonControl.exportDataShow = false;//导出数据
+                    buttonControl.changeOperatorShow = false;//调整执行人
+                    break;
                 case B: //基地经理
                     buttonControl.warAssignShow = false;//战区分派
                     buttonControl.superviseAssignShow = false;//督导分派
