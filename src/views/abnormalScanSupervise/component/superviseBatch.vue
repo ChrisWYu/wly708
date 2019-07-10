@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-dialog
-                title="核查"
+                title="督导"
                 :visible.sync="dialogVisible"
                 width="452px"
                 :close-on-click-modal="closeOnClickModal"
@@ -31,10 +31,10 @@
     import loading from '../../common/loading'
 
     export default {
-        props: ['currentData'],
+        props: ['checkDataId'],
         mounted() {
             this.date = (new Date()).toLocaleDateString();
-            this.describe = JSON.parse(JSON.stringify(this.currentData.warCheckResult))
+
         },
         components: {
             loading
@@ -71,10 +71,10 @@
                 let data = {
                     'retvemo': this.describe,
                     'datetime': this.date,
-                    'codeIds': [this.currentData.id]
-                };
+                    'codeIds': this.checkDataId
+                }
                 this.$http.post("/api/ddadapter/openApi/data", {
-                        "code": "00711ZI09",
+                        "code": "00711ZI10",
                         "data": data
                     }, {
                         headers: {

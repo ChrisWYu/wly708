@@ -69,7 +69,8 @@
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.9.7",
     "webpack-hot-middleware": "^2.25.0",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.0",
+    "xlsx": "^0.14.1"
   },
   "engines": {
     "node": ">= 6.0.0",

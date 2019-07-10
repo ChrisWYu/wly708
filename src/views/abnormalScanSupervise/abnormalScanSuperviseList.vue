@@ -192,7 +192,6 @@
                     @select="handleSelectOne"
                     @select-all="handleSelectAll"
                     empty-text="暂无数据～"
-                    @selection-change="handleSelectionChange"
                     border
                     style="width: 100%;margin-top: 16px;">
                 <el-table-column
@@ -240,7 +239,7 @@
                                 </div>
                             </template>
                             <div class="tableRowDetail">
-                                {{totalAbnormalStatusTotal(scope.row)}}
+                                {{scope.row.abnormalNum}}
                             </div>
                         </el-tooltip>
                     </template>
@@ -313,7 +312,7 @@
         </div>
         <loading v-if="loadingStatus" v-model="loadingStatus"></loading>
         <warAssign v-if="warAssignShow" v-model="warAssignShow" :warCheckList="warCheckList"
-                   :distributors="distributors"></warAssign>
+                   :distributors="checkDataId"></warAssign>
     </div>
 </template>
 
@@ -322,6 +321,7 @@
     import {EventUtil} from '../../assets/lib/util'
     import loading from '../common/loading'
     import warAssign from './component/warAssign'
+    import {export_json_to_excel} from "../../assets/lib/Export2Excel";
 
     export default {
         components: {
@@ -355,8 +355,12 @@
             }
             this.$http.all([this.getWarCheckList(), this.getWarBelongList(), this.getDistributorList(), this.getList()])
                 .then(this.$http.spread((war, warBelong, distributor, list) => {
-                    _this.tableData = list.data.data.list;
+                    let tableData = list.data.data.list;
+                    _this.tableData = tableData;
                     _this.tableTotal = list.data.data.total;
+                    for (let i = 0; i < tableData.length; i++) {
+                        tableData[i].abnormalNum = this.totalAbnormalStatusTotal(tableData[i]);
+                    }
                     _this.warCheckList = war.data.data;
                     _this.warBelongList = warBelong.data.data;
                     _this.distributorList = distributor.data.data;
@@ -531,7 +535,7 @@
                 },
                 /** 查询条件结束 */
                 /** 分页配置开始 */
-                pageSizes: [10, 15, 20, 50],
+                pageSizes: this.$store.state.pageSizes,
                 tableTotal: 0,
                 routerToNum: 1,
                 /** 分页配置结束 */
@@ -539,7 +543,8 @@
                 tableData: [],
                 checkData: [],
                 checkDataId: [],
-                focusTime: 0,
+                timer: {},
+                currentPageCheck: [],
             }
         },
         methods: {
@@ -570,34 +575,7 @@
                 }
                 return temp_class;
             },
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
-                let distributors = [];
-                this.multipleSelection.map(item => {
-                    distributors.push(item.id);
-                })
-                this.distributors = distributors;
-            },
-            windowScroll: function () {
-                if (window.pageXOffset) {
-                    this.scrollInfo = {
-                        x: window.pageXOffset,
-                        y: window.pageYOffset
-                    }
-                } else {
-                    this.scrollInfo = {
-                        x: document.body.scrollLeft + document.documentElement.scrollLeft,
-                        y: document.body.scrollTop + document.documentElement.scrollTop
-                    }
-                }
-            },
-            scrollToHistory: function (y) {
-                document.documentElement.scrollTop = y;
-            },
-            warAssignClick() {
-                // 战区分派
-                this.warAssignShow = !this.warAssignShow;
-            },
+
             getDdWarOperator() {
                 if (!(this.userLevel == 'B' || this.userLevel == 'E' || this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE')) {
                     this.getddPersonInfo('changeSearchWarOperator');
@@ -660,7 +638,7 @@
                     "data": {
                         'superviseChargeId': superviseChargeId,
                         'superviseChargeName': superviseChargeName,
-                        'distributors': this.distributors
+                        'distributors': this.checkDataId
                     }
                 }, {
                     headers: {
@@ -679,7 +657,7 @@
                     "data": {
                         'warOperatorId': warOperatorId,
                         'warOperatorName': warOperatorName,
-                        'distributors': this.distributors
+                        'distributors': this.checkDataId
                     }
                 }, {
                     headers: {
@@ -690,17 +668,51 @@
                     this.messagePrompt(way, res.data.message);
                 });
             },
+            checkCheckBoxValue() {
+                let result = true;
+                if (this.checkDataId.length === 0) {
+                    this.$message({message: '请勾选需要分派的经销商', type: 'error'});
+                    result = false;
+                }
+                return result;
+            },
             superviseAssignClick() {
+                if (!this.checkCheckBoxValue()) {
+                    return false;
+                }
                 this.getddPersonInfo('superviseAssignHandle');
             },
+            warAssignClick() {
+                if (!this.checkCheckBoxValue()) {
+                    return false;
+                }
+                this.warAssignShow = !this.warAssignShow;
+            },
             appointOperator() {
+                if (!this.checkCheckBoxValue()) {
+                    return false;
+                }
                 this.getddPersonInfo('appointOperatorHandle');
             },
             exportData() {
-                console.log(this.windowScroll())
+                if (!this.checkCheckBoxValue()) {
+                    return false;
+                }
+                require.ensure([], () => {
+                    const tHeader = ['经销商', '所属战区', '异常数', '创建日期', '核查战区', '分派时间', '截止时间', '核查情况', '督导负责人', '督导情况'];
+                    const filterVal = ['distributor', 'warBelong', 'abnormalNum', 'createDate', 'warCheck', 'checkStartTime', 'checkEndTime', 'checkStatus', 'superviseCharge', 'superviseStatus'];
+                    const list = this.checkData;
+                    const data = this.formatJson(filterVal, list);
+                    export_json_to_excel(tHeader, data, '异常扫码列表');
+                });
             },
             changeOperator() {
-
+                if (!this.checkCheckBoxValue()) {
+                    return false;
+                }
+            },
+            formatJson(filterVal, jsonData) {
+                return jsonData.map(v => filterVal.map(j => v[j]))
             },
             totalAbnormalStatusTotal(e) {
                 return e.codeA + e.codeB + e.codeC + e.codeD;
@@ -708,10 +720,6 @@
             changeAbnormalStatus(obj) {
                 let codeResult = {codeA: '作业层级异动', codeB: '跨渠道异动', codeC: '跨客户异动', codeD: '跨区域异动'};
                 return codeResult[obj];
-            },
-            searchDataClick: function () {
-                this.searchUseData = JSON.parse(JSON.stringify(this.searchData));
-                this.currentChange(1);
             },
             clearRowSearch(t) {
                 for (let i = 0; i < t.length; i++) {
@@ -727,6 +735,117 @@
                         this.searchData[t[i]] = '';
                     }
                 }
+            },
+            handleRouterTo: function () {
+                let routerToNum = JSON.parse(JSON.stringify(this.routerToNum));
+                this.$store.commit('changeCurrentPage', {
+                    module: this.searchData.currentRouterName,
+                    currentPage: routerToNum
+                });
+                this.currentChange(routerToNum);
+            },
+            blurRouterTo: function () {
+                let routeToNum = this.routerToNum;
+                let num = parseInt(routeToNum, 10);
+                let pageSize = this.pageSize;
+                let tableTotal = this.tableTotal;
+                let max = Math.ceil(tableTotal / pageSize);
+                let result = 1;
+                if (!isNaN(num)) {
+                    if (num > 1) {
+                        if (num > max) {
+                            result = max;
+                        } else {
+                            result = num;
+                        }
+                    }
+                }
+                this.routerToNum = result;
+            },
+            handleSizeChange(val) {
+                this.$store.commit('changePageSize', {
+                    module: this.searchData.currentRouterName,
+                    pageSize: val
+                });
+                this.currentChange(1);
+            },
+            currentChange: function (val) {
+                this.$store.commit('changeCurrentPage', {
+                    module: this.searchData.currentRouterName,
+                    currentPage: val
+                });
+                this.getListInfo();
+            },
+            handleSelectOne: function (ar, ob) {
+                let dataIndex = this.checkDataId.indexOf(ob.id);
+                if (dataIndex === -1) {
+                    this.checkData.push(ob);
+                    this.checkDataId.push(ob.id);
+                } else {
+                    this.checkData.splice(dataIndex, 1);
+                    this.checkDataId.splice(dataIndex, 1);
+                }
+            },
+            handleSelectAll: function (ar) {
+                let tableData = this.tableData;
+                let checkData = JSON.parse(JSON.stringify(this.checkData));
+                let checkDataId = JSON.parse(JSON.stringify(this.checkDataId));
+                let dataIndex;
+                if (ar.length > 0) {
+                    for (let i = 0; i < tableData.length; i++) {
+                        dataIndex = checkDataId.indexOf(tableData[i].id);
+                        if (dataIndex === -1) {
+                            checkData.push(tableData[i]);
+                            checkDataId.push(tableData[i].id);
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < tableData.length; i++) {
+                        dataIndex = checkDataId.indexOf(tableData[i].id);
+                        if (dataIndex !== -1) {
+                            checkData.splice(dataIndex, 1);
+                            checkDataId.splice(dataIndex, 1);
+                        }
+                    }
+                }
+                this.checkData = checkData;
+                this.checkDataId = checkDataId;
+            },
+            handleClick: function (row) {
+                this.$store.commit('saveOperateRow', {
+                    module: this.searchData.currentRouterName,
+                    operateRow: row
+                });
+                this.$router.push(
+                    {
+                        name: 'abnormalScanSuperviseList/listDetail',
+                        params: {
+                            id: row.id
+                        }
+                    }
+                );
+            },
+            windowScroll: function () {
+                if (window.pageXOffset) {
+                    this.scrollInfo = {
+                        x: window.pageXOffset,
+                        y: window.pageYOffset
+                    }
+                } else {
+                    this.scrollInfo = {
+                        x: document.body.scrollLeft + document.documentElement.scrollLeft,
+                        y: document.body.scrollTop + document.documentElement.scrollTop
+                    }
+                }
+            },
+            scrollToHistory: function (y) {
+                document.documentElement.scrollTop = y;
+            },
+            searchDataClick: function () {
+                this.searchUseData = JSON.parse(JSON.stringify(this.searchData));
+                this.checkData = [];
+                this.checkDataId = [];
+                this.currentChange(1);
             },
             clearDataClick: function () {
                 if (this.userLevel == 'D' || this.userLevel == 'DE' || this.userLevel == 'X') {
@@ -767,73 +886,6 @@
                 this.searchUseData.assignDate = [];
                 this.searchData.endDate = [];
                 this.searchUseData.endDate = [];
-            },
-            handleRouterTo: function () {
-                let routerToNum = JSON.parse(JSON.stringify(this.routerToNum));
-                this.$store.commit('changeCurrentPage', {
-                    module: this.searchData.currentRouterName,
-                    currentPage: routerToNum
-                });
-                this.currentChange(routerToNum);
-            },
-            blurRouterTo: function () {
-                let routeToNum = this.routerToNum;
-                let num = parseInt(routeToNum, 10);
-                let pageSize = this.pageSize;
-                let tableTotal = this.tableTotal;
-                let max = Math.ceil(tableTotal / pageSize);
-                let result = 1;
-                if (!isNaN(num)) {
-                    if (num > 1) {
-                        if (num > max) {
-                            result = max;
-                        } else {
-                            result = num;
-                        }
-                    }
-                }
-                this.routerToNum = result;
-            },
-            handleClick: function (row) {
-                this.$store.commit('saveOperateRow', {
-                    module: this.searchData.currentRouterName,
-                    operateRow: row
-                });
-                this.$router.push(
-                    {
-                        name: 'abnormalScanSuperviseList/listDetail',
-                        params: {
-                            id: row.id
-                        }
-                    }
-                );
-            },
-            handleSizeChange(val) {
-                this.$store.commit('changePageSize', {
-                    module: this.searchData.currentRouterName,
-                    pageSize: val
-                });
-                this.currentChange(1);
-            },
-            currentChange: function (val) {
-                this.$store.commit('changeCurrentPage', {
-                    module: this.searchData.currentRouterName,
-                    currentPage: val
-                });
-                this.getListInfo();
-            },
-            handleSelectOne: function (ar, ob) {
-                // let dataIndex = this.checkDataId.indexOf(ob.id);
-                // if (dataIndex === -1) {
-                //     this.checkData.push(ob);
-                //     this.checkDataId.push(ob.id);
-                // } else {
-                //     this.checkData.splice(dataIndex, 1);
-                //     this.checkDataId.splice(dataIndex, 1);
-                // }
-            },
-            handleSelectAll: function (ar) {
-
             },
             /** 数据请求开始 */
             getAbnormalSmallCategoryList: function () {
@@ -937,31 +989,31 @@
                 this.loadingShow();
                 this.getList().then((res) => {
                     let tableData = res.data.data.list;
-                    // this.tableData = tableData;
-                    // let checkId = JSON.parse(JSON.stringify(this.checkDataId));
-                    // let checkData = JSON.parse(JSON.stringify(this.checkData));
-                    // let currentPageCheck = [];
-                    // console.log(checkId);
-                    // for (let i = 0; i < tableData.length; i++) {
-                    //     if (checkId.indexOf(tableData[i].id) !== -1) {
-                    //         currentPageCheck.push(tableData[i]);
-                    //     }
-                    // }
-                    // tableData.forEach(row => {
-                    //     this.$refs.multipleTable.toggleRowSelection(row,true);
-                    // });
                     this.tableData = tableData;
+                    let checkId = JSON.parse(JSON.stringify(this.checkDataId));
+                    let currentPageCheck = [];
+                    for (let i = 0; i < tableData.length; i++) {
+                        tableData[i].abnormalNum = this.totalAbnormalStatusTotal(tableData[i]);
+                        if (checkId.indexOf(tableData[i].id) !== -1) {
+                            currentPageCheck.push(tableData[i]);
+                        }
+                    }
                     this.tableTotal = res.data.data.total;
-                    // setTimeout(() => {
-                    //     currentPageCheck.forEach(row => {
-                    //         this.$refs.multipleTable.toggleRowSelection(row, true);
-                    //     });
-                    //     this.checkData = checkData;
-                    //     this.checkDataId = checkId;
-                    // }, 500);
-
-                    this.loadingCancel();
+                    this.currentPageCheck = currentPageCheck;
+                    this.timer = setTimeout(this.renderTableCheck, 100);
                 });
+            },
+            renderTableCheck() {
+                let is_check = document.querySelector('.el-checkbox__input.is-checked');
+                if (is_check || this.currentPageCheck.length === 0) {
+                    clearTimeout(this.timer);
+                    this.loadingCancel();
+                } else {
+                    this.currentPageCheck.forEach(row => {
+                        this.$refs.multipleTable.toggleRowSelection(row, true);
+                    });
+                    this.timer = setTimeout(this.renderTableCheck, 100);
+                }
             },
             /** 数据请求结束 */
         }

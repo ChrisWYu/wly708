@@ -26,7 +26,7 @@ export const powerControlLib = function (level, route) {
                     buttonControl.warAssignShow = false;//战区分派
                     buttonControl.superviseAssignShow = false;//督导分派
                     buttonControl.operatorAssignShow = false;//指派执行人
-                    buttonControl.exportDataShow = false;//导出数据
+                    buttonControl.exportDataShow = true;//导出数据
                     buttonControl.changeOperatorShow = false;//调整执行人
                     break;
                 case B: //基地经理
@@ -68,7 +68,7 @@ export const powerControlLib = function (level, route) {
                     buttonControl.warAssignShow = true;//战区分派
                     buttonControl.superviseAssignShow = true;//督导分派
                     buttonControl.operatorAssignShow = false;//指派执行人
-                    buttonControl.exportDataShow = false;//导出数据
+                    buttonControl.exportDataShow = true;//导出数据
                     buttonControl.changeOperatorShow = false;//调整执行人
                     break;
                 case DE: //督导组员

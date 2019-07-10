@@ -114,6 +114,16 @@
                     <div class="cusButton cusWhite" @click="clearDataClick" style="margin-left: 20px;">重置</div>
                 </div>
             </div>
+            <div class="row">
+                <div class="cusButton cusWhite operateButton"
+                     @click="checkClick">
+                    核查
+                </div>
+                <div class="cusButton cusWhite operateButton"
+                     @click="superviseClick">
+                    督导
+                </div>
+            </div>
             <hr style="margin-top: 10px; height:2px;border:none;border-top:2px dotted rgb(238,238,238);"/>
             <el-table
                     ref="multipleTable"
@@ -133,6 +143,24 @@
                         prop="logisticsCode"
                         label="物流码"
                         width="140">
+                </el-table-column>
+                <el-table-column
+                        show-overflow-tooltip
+                        width="140"
+                        prop="storeName"
+                        label="终端名称">
+                </el-table-column>
+                <el-table-column
+                        show-overflow-tooltip
+                        width="140"
+                        prop="storeWar"
+                        label="终端战区">
+                </el-table-column>
+                <el-table-column
+                        show-overflow-tooltip
+                        width="140"
+                        prop="storeInTime"
+                        label="终端扫码时间">
                 </el-table-column>
                 <!--<el-table-column-->
                 <!--show-overflow-tooltip-->
@@ -289,21 +317,27 @@
                   :currentData="currentData"></checkOne>
         <superviseOne v-if="superviseOneShow" v-model="superviseOneShow"
                       :currentData="currentData"></superviseOne>
+        <checkBatch v-if="checkBatchShow" v-model="checkBatchShow"
+                    :checkDataId="checkDataId"></checkBatch>
+        <superviseBatch v-if="superviseBatchShow" v-model="superviseBatchShow"
+                        :checkDataId="checkDataId"></superviseBatch>
         <loading v-if="loadingStatus" v-model="loadingStatus"></loading>
     </div>
 </template>
 <script>
     import checkOne from './checkOne'
     import superviseOne from './superviseOne'
+    import checkBatch from './checkBatch'
+    import superviseBatch from './superviseBatch'
     import loading from '../../common/loading'
 
     export default {
         components: {
-            superviseOne, checkOne, loading
+            superviseOne, superviseBatch, checkOne, checkBatch, loading
         },
         mounted() {
             let _this = this;
-            _this.loadingShow();
+            this.loadingShow();
             let operateRow = _this.$store.state['abnormalScanSuperviseList'].operateRow;
             this.operateRow = operateRow;
             this.codeSourceDistributor = operateRow.distributor;
@@ -337,7 +371,9 @@
         data: function () {
             return {
                 checkOneShow: false,
+                checkBatchShow: false,
                 superviseOneShow: false,
+                superviseBatchShow: false,
                 clearable: true,
                 loadingStatus: false,
                 /** 查询条件开始 */
@@ -408,14 +444,18 @@
                 /** 查询条件结束 */
                 /** 分页配置开始 */
                 pageSize: 10,
-                pageSizes: [10, 15, 20, 50],
+                pageSizes: this.$store.state.pageSizes,
                 currentPage: 1,
                 tableTotal: 0,
                 routerToNum: 1,
                 /** 分页配置结束 */
                 operateRow: {},
                 currentData: {},
-                tableData: []
+                tableData: [],
+                checkData: [],
+                checkDataId: [],
+                timer: {},
+                currentPageCheck: [],
             }
         },
         methods: {
@@ -424,6 +464,26 @@
             },
             loadingCancel: function () {
                 this.loadingStatus = false;
+            },
+            checkCheckBoxValue() {
+                let result = true;
+                if (this.checkDataId.length === 0) {
+                    this.$message({message: '请勾选需要核查的物流码', type: 'error'});
+                    result = false;
+                }
+                return result;
+            },
+            checkClick: function () {
+                if (!this.checkCheckBoxValue()) {
+                    return false;
+                }
+                this.checkBatchShow = !this.checkBatchShow;
+            },
+            superviseClick: function () {
+                if (!this.checkCheckBoxValue()) {
+                    return false;
+                }
+                this.superviseBatchShow = !this.superviseBatchShow;
             },
             sureTolast: function () {
                 this.$http.post("/api/ddadapter/openApi/data", {
@@ -453,6 +513,8 @@
             },
             searchDataClick: function () {
                 this.searchUseData = JSON.parse(JSON.stringify(this.searchData));
+                this.checkData = [];
+                this.checkDataId = [];
                 this.currentChange(1);
             },
             clearDataClick: function () {
@@ -473,12 +535,6 @@
                 this.searchUseData.scanOutDistributor = '';
                 this.searchUseData.scanOutWar = '';
                 this.searchUseData.scanOutChannel = '';
-            },
-            handleSelectOne: function (ar, ob) {
-
-            },
-            handleSelectAll: function (ar) {
-
             },
             superviseOne: function (row) {
                 this.currentData = row;
@@ -518,15 +574,42 @@
                 }
                 this.routerToNum = result;
             },
-            /** 数据请求开始 */
-            getListInfo() {
-                this.loadingShow();
-                this.getDetailList().then((res) => {
-                    this.tableData = res.data.data.list;
-                    this.tableTotal = res.data.data.total;
-                    this.loadingCancel();
-                });
+            handleSelectOne: function (ar, ob) {
+                let dataIndex = this.checkDataId.indexOf(ob.id);
+                if (dataIndex === -1) {
+                    this.checkData.push(ob);
+                    this.checkDataId.push(ob.id);
+                } else {
+                    this.checkData.splice(dataIndex, 1);
+                    this.checkDataId.splice(dataIndex, 1);
+                }
             },
+            handleSelectAll: function (ar) {
+                let tableData = this.tableData;
+                let checkData = JSON.parse(JSON.stringify(this.checkData));
+                let checkDataId = JSON.parse(JSON.stringify(this.checkDataId));
+                let dataIndex;
+                if (ar.length > 0) {
+                    for (let i = 0; i < tableData.length; i++) {
+                        dataIndex = checkDataId.indexOf(tableData[i].id);
+                        if (dataIndex === -1) {
+                            checkData.push(tableData[i]);
+                            checkDataId.push(tableData[i].id);
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < tableData.length; i++) {
+                        dataIndex = checkDataId.indexOf(tableData[i].id);
+                        if (dataIndex !== -1) {
+                            checkData.splice(dataIndex, 1);
+                            checkDataId.splice(dataIndex, 1);
+                        }
+                    }
+                }
+                this.checkData = checkData;
+                this.checkDataId = checkDataId;
+            },
+            /** 数据请求开始 */
             getScanOutChannelList: function () {
                 return this.$http.post("/api/ddadapter/openApi/data", {
                     "code": "15",
@@ -601,6 +684,35 @@
                         },
                     }
                 );
+            },
+            getListInfo() {
+                this.loadingShow();
+                this.getDetailList().then((res) => {
+                    let tableData = res.data.data.list;
+                    this.tableTotal = res.data.data.total;
+                    this.tableData = tableData;
+                    let checkId = JSON.parse(JSON.stringify(this.checkDataId));
+                    let currentPageCheck = [];
+                    for (let i = 0; i < tableData.length; i++) {
+                        if (checkId.indexOf(tableData[i].id) !== -1) {
+                            currentPageCheck.push(tableData[i]);
+                        }
+                    }
+                    this.currentPageCheck = currentPageCheck;
+                    this.timer = setTimeout(this.renderTableCheck, 100);
+                });
+            },
+            renderTableCheck() {
+                let is_check = document.querySelector('.el-checkbox__input.is-checked');
+                if (is_check || this.currentPageCheck.length === 0) {
+                    clearTimeout(this.timer);
+                    this.loadingCancel();
+                } else {
+                    this.currentPageCheck.forEach(row => {
+                        this.$refs.multipleTable.toggleRowSelection(row, true);
+                    });
+                    this.timer = setTimeout(this.renderTableCheck, 100);
+                }
             },
             /** 数据请求结束 */
         }
