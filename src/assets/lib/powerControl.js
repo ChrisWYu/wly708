@@ -20,6 +20,8 @@ export const powerControlLib = function (level, route) {
                 operatorAssignShow: false,//指派执行人
                 exportDataShow: false,//导出数据
                 changeOperatorShow: false,//调整执行人
+                checkShow: false,  //核查
+                superviseShow: false, //督导
             };
             switch (level) {
                 case X:
@@ -38,6 +40,24 @@ export const powerControlLib = function (level, route) {
                     break;
                 case T: //电商组长
                     buttonControl.operatorAssignShow = true;//指派执行人
+                    break;
+                case E:
+                    buttonControl.checkShow = true;//核查
+                    break;
+                case B:
+                    buttonControl.checkShow = true;//核查
+                    break;
+                case KE:
+                    buttonControl.checkShow = true;//核查
+                    break;
+                case TE:
+                    buttonControl.checkShow = true;//核查
+                    break;
+                case WE:
+                    buttonControl.checkShow = true;//核查
+                    break;
+                case DE:
+                    buttonControl.superviseShow = true;//核查
                     break;
                 default :
                     break;

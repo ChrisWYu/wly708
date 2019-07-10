@@ -115,11 +115,12 @@
                 </div>
             </div>
             <div class="row">
-                <div class="cusButton cusWhite operateButton"
+                <div v-if="buttonControl.checkShow"
+                     class="cusButton cusWhite operateButton"
                      @click="checkClick">
                     核查
                 </div>
-                <div class="cusButton cusWhite operateButton"
+                <div v-if="buttonControl.superviseShow" class="cusButton cusWhite operateButton"
                      @click="superviseClick">
                     督导
                 </div>
@@ -265,17 +266,17 @@
                         label="督导结果">
                 </el-table-column>
                 <el-table-column
-                        v-if="userLevel == 'E'|| userLevel == 'B'|| userLevel == 'KE'|| userLevel == 'TE'|| userLevel == 'WE' || userLevel == 'DE'"
+                        v-if="buttonControl.checkShow || buttonControl.superviseShow"
                         fixed="right"
                         label="操作"
                         width="100">
                     <template slot-scope="scope">
-                        <div v-if="userLevel == 'E'|| userLevel == 'B'|| userLevel == 'KE'|| userLevel == 'TE'|| userLevel == 'WE'"
+                        <div v-if="buttonControl.checkShow"
                              class="tableButtons"
                              @click="checkOne(scope.row)"><i
                                 class="icon iconfont iconweibiaoti--5"></i>
                             <p>核查</p></div>
-                        <div v-if="userLevel == 'DE'" class="tableButtons"
+                        <div v-if="buttonControl.superviseShow" class="tableButtons"
                              @click="superviseOne(scope.row)"><i
                                 class="icon iconfont iconweibiaoti--6"></i>
                             <p>督导</p></div>
@@ -307,7 +308,7 @@
             <div class="row" style="text-align: center;">
                 <div class="cusButton cusWhite" @click="backTolast()" style="margin-right:20px;">返回</div>
 
-                <div v-if="userLevel == 'E'|| userLevel == 'B'|| userLevel == 'KE'|| userLevel == 'TE'|| userLevel == 'WE' || userLevel == 'DE'"
+                <div v-if="buttonControl.checkShow || buttonControl.superviseShow"
                      class="cusButton cusRed" @click="sureTolast()">提交
                 </div>
 
@@ -330,6 +331,7 @@
     import checkBatch from './checkBatch'
     import superviseBatch from './superviseBatch'
     import loading from '../../common/loading'
+    import {powerControlLib} from '../../../assets/lib/powerControl'
 
     export default {
         components: {
@@ -338,6 +340,7 @@
         mounted() {
             let _this = this;
             this.loadingShow();
+            this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
             let operateRow = _this.$store.state['abnormalScanSuperviseList'].operateRow;
             this.operateRow = operateRow;
             this.codeSourceDistributor = operateRow.distributor;
@@ -376,6 +379,7 @@
                 superviseBatchShow: false,
                 clearable: true,
                 loadingStatus: false,
+                buttonControl: {},
                 /** 查询条件开始 */
                 searchData: {
                     logisticsCode: '',

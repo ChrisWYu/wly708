@@ -567,15 +567,6 @@
                 }
                 return temp_class;
             },
-            superviseChargeClass() {
-                let temp_class = 'searchLabel';
-                temp_class += this.searchData.superviseCharge ? ' has' : ' empty';
-                if (this.userLevel == 'DE') {
-                    temp_class += ' disabled';
-                }
-                return temp_class;
-            },
-
             getDdWarOperator() {
                 if (!(this.userLevel == 'B' || this.userLevel == 'E' || this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE')) {
                     this.getddPersonInfo('changeSearchWarOperator');
@@ -594,8 +585,17 @@
                 this.searchData.warCharge = users.name;
                 this.searchData.warChargeValue = users.emplId;
             },
+            superviseChargeClass() {
+                let temp_class = 'searchLabel';
+                temp_class += this.searchData.superviseCharge ? ' has' : ' empty';
+                if (this.userLevel == 'DE') {
+                    temp_class += ' disabled';
+                }
+                return temp_class;
+            },
             getDdSuperviseCharge() {
-                if (!this.userLevel == 'DE') {
+                if (!(this.userLevel == 'DE')) {
+                    console.log(123);
                     this.getddPersonInfo('changeSearchSuperviseCharge');
                 }
             },
@@ -728,7 +728,7 @@
                             this.searchData[t[i]] = '';
                         }
                     } else if (t[i] == 'superviseCharge' || t[i] == 'superviseChargeValue') {
-                        if (!this.userLevel == 'DE') {
+                        if (!(this.userLevel == 'DE')) {
                             this.searchData[t[i]] = '';
                         }
                     } else {
@@ -862,7 +862,7 @@
                     this.searchData.warOperatorValue = '';
                     this.searchUseData.warOperatorValue = '';
                 }
-                if (!this.userLevel == 'DE') {
+                if (!(this.userLevel == 'DE')) {
                     this.searchData.superviseCharge = '';
                     this.searchUseData.superviseCharge = '';
                     this.searchData.superviseChargeValue = '';
