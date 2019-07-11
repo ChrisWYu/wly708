@@ -340,7 +340,7 @@
         mounted() {
             let _this = this;
             this.loadingShow();
-            this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
+            this.buttonControl = powerControlLib(this.userLevel, 'abnormalScanSuperviseList');
             let operateRow = _this.$store.state['abnormalScanSuperviseList'].operateRow;
             this.operateRow = operateRow;
             this.codeSourceDistributor = operateRow.distributor;
