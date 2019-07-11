@@ -29,6 +29,7 @@ export const powerControlLib = function (level, route) {
                     break;
                 case WF: // 战区负责人
                     buttonControl.operatorAssignShow = true;//指派执行人
+                    buttonControl.changeOperatorShow = true;//调整执行人
                     break;
                 case D: //督导组长
                     buttonControl.warAssignShow = true;//战区分派
@@ -37,9 +38,11 @@ export const powerControlLib = function (level, route) {
                     break;
                 case K: //KA组长
                     buttonControl.operatorAssignShow = true;//指派执行人
+                    buttonControl.changeOperatorShow = true;//调整执行人
                     break;
                 case T: //电商组长
                     buttonControl.operatorAssignShow = true;//指派执行人
+                    buttonControl.changeOperatorShow = true;//调整执行人
                     break;
                 case E:
                     buttonControl.checkShow = true;//核查

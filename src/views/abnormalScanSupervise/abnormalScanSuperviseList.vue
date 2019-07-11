@@ -595,7 +595,6 @@
             },
             getDdSuperviseCharge() {
                 if (!(this.userLevel == 'DE')) {
-                    console.log(123);
                     this.getddPersonInfo('changeSearchSuperviseCharge');
                 }
             },
@@ -630,6 +629,20 @@
                     }
                 });
             },
+            checkCheckBoxValue() {
+                let result = true;
+                if (this.checkDataId.length === 0) {
+                    this.$message({message: '请勾选需要分派的经销商', type: 'error'});
+                    result = false;
+                }
+                return result;
+            },
+            superviseAssignClick() {
+                if (!this.checkCheckBoxValue()) {
+                    return false;
+                }
+                this.getddPersonInfo('superviseAssignHandle');
+            },
             superviseAssignHandle(result) {
                 let superviseChargeName = result.users[0].name;
                 let superviseChargeId = result.users[0].emplId;
@@ -648,6 +661,18 @@
                     let way = Number(res.data.statusCode) === 200 ? 'success' : 'error';
                     this.messagePrompt(way, res.data.message);
                 });
+            },
+            warAssignClick() {
+                if (!this.checkCheckBoxValue()) {
+                    return false;
+                }
+                this.warAssignShow = !this.warAssignShow;
+            },
+            appointOperator() {
+                if (!this.checkCheckBoxValue()) {
+                    return false;
+                }
+                this.getddPersonInfo('appointOperatorHandle');
             },
             appointOperatorHandle(result) {
                 let warOperatorName = result.users[0].name;
@@ -668,32 +693,6 @@
                     this.messagePrompt(way, res.data.message);
                 });
             },
-            checkCheckBoxValue() {
-                let result = true;
-                if (this.checkDataId.length === 0) {
-                    this.$message({message: '请勾选需要分派的经销商', type: 'error'});
-                    result = false;
-                }
-                return result;
-            },
-            superviseAssignClick() {
-                if (!this.checkCheckBoxValue()) {
-                    return false;
-                }
-                this.getddPersonInfo('superviseAssignHandle');
-            },
-            warAssignClick() {
-                if (!this.checkCheckBoxValue()) {
-                    return false;
-                }
-                this.warAssignShow = !this.warAssignShow;
-            },
-            appointOperator() {
-                if (!this.checkCheckBoxValue()) {
-                    return false;
-                }
-                this.getddPersonInfo('appointOperatorHandle');
-            },
             exportData() {
                 if (!this.checkCheckBoxValue()) {
                     return false;
@@ -710,6 +709,26 @@
                 if (!this.checkCheckBoxValue()) {
                     return false;
                 }
+                this.getddPersonInfo('changeOperatorHandle');
+            },
+            changeOperatorHandle(result) {
+                let warOperatorName = result.users[0].name;
+                let warOperatorId = result.users[0].emplId;
+                this.$http.post(`/api/ddadapter/openApi/data`, {
+                    "code": "00711ZI12",
+                    "data": {
+                        'warOperatorId': warOperatorId,
+                        'warOperatorName': warOperatorName,
+                        'distributors': this.checkDataId
+                    }
+                }, {
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                }).then(res => {
+                    let way = Number(res.data.statusCode) === 200 ? 'success' : 'error';
+                    this.messagePrompt(way, res.data.message);
+                });
             },
             formatJson(filterVal, jsonData) {
                 return jsonData.map(v => filterVal.map(j => v[j]))
