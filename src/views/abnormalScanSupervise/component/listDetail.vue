@@ -143,7 +143,19 @@
                         show-overflow-tooltip
                         prop="logisticsCode"
                         label="物流码"
-                        width="140">
+                        width="260">
+                </el-table-column>
+                <el-table-column
+                        show-overflow-tooltip
+                        width="125"
+                        prop="abnormalLargeCategory"
+                        label="异常大类">
+                </el-table-column>
+                <el-table-column
+                        show-overflow-tooltip
+                        width="400"
+                        prop="abnormalSmallCategory"
+                        label="异常明细">
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
@@ -216,18 +228,6 @@
                         width="165"
                         prop="distributorInTime"
                         label="经销商入库时间">
-                </el-table-column>
-                <el-table-column
-                        show-overflow-tooltip
-                        width="125"
-                        prop="abnormalLargeCategory"
-                        label="异常大类">
-                </el-table-column>
-                <el-table-column
-                        show-overflow-tooltip
-                        width="400"
-                        prop="abnormalSmallCategory"
-                        label="异常明细">
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
