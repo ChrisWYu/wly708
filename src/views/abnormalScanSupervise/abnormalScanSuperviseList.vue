@@ -332,27 +332,31 @@
             let _this = this;
             EventUtil.add(window, 'scroll', this.windowScroll);
             this.loadingShow();
-            if (this.userLevel != 'D' && this.userLevel != 'DE' && this.userLevel != 'X') {
-                this.searchData.warCheck = sessionStorage.warcode;
-                this.searchUseData.warCheck = sessionStorage.warcode;
-            }
-            if (this.userLevel == 'B' || this.userLevel == 'E' || this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE') {
-                this.searchData.warOperatorValue = sessionStorage.userid;
-                this.searchUseData.warOperatorValue = sessionStorage.userid;
-                this.searchData.warOperator = sessionStorage.username;
-                this.searchUseData.warOperator = sessionStorage.username;
-            }
-            if (this.userLevel == 'DE') {
-                this.searchData.superviseCharge = sessionStorage.username;
-                this.searchUseData.superviseCharge = sessionStorage.username;
-                this.searchData.superviseChargeValue = sessionStorage.userid;
-                this.searchUseData.superviseChargeValue = sessionStorage.userid;
-            }
-            this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
             let searchUseData = _this.$store.state[_this.searchUseData.currentRouterName].searchUseData;
             for (let ke in searchUseData) {
                 _this.searchUseData[ke] = searchUseData[ke];
             }
+            let searchData = _this.$store.state[_this.searchData.currentRouterName].searchData;
+            for (let key in searchData) {
+                _this.searchData[key] = searchData[key];
+            }
+            if (_this.userLevel != 'D' && _this.userLevel != 'DE' && _this.userLevel != 'X') {
+                this.searchData.warCheck = sessionStorage.warcode;
+                this.searchUseData.warCheck = sessionStorage.warcode;
+            }
+            if (_this.userLevel == 'B' || _this.userLevel == 'E' || _this.userLevel == 'WE' || this.userLevel == 'KE' || this.userLevel == 'TE') {
+                _this.searchData.warOperatorValue = sessionStorage.userid;
+                _this.searchUseData.warOperatorValue = sessionStorage.userid;
+                _this.searchData.warOperator = sessionStorage.username;
+                _this.searchUseData.warOperator = sessionStorage.username;
+            }
+            if (this.userLevel == 'DE') {
+                _this.searchData.superviseCharge = sessionStorage.username;
+                _this.searchUseData.superviseCharge = sessionStorage.username;
+                _this.searchData.superviseChargeValue = sessionStorage.userid;
+                _this.searchUseData.superviseChargeValue = sessionStorage.userid;
+            }
+            this.buttonControl = powerControlLib(this.userLevel, this.$route.name);
             this.$http.all([this.getWarCheckList(), this.getWarBelongList(), this.getDistributorList(), this.getList()])
                 .then(this.$http.spread((war, warBelong, distributor, list) => {
                     let tableData = list.data.data.list;
@@ -364,12 +368,8 @@
                     _this.warCheckList = war.data.data;
                     _this.warBelongList = warBelong.data.data;
                     _this.distributorList = distributor.data.data;
-                    let searchData = _this.$store.state[_this.searchData.currentRouterName].searchData;
                     let scrollY = _this.$store.state[_this.searchData.currentRouterName].scrollY;
                     setTimeout(function () {
-                        for (let key in searchData) {
-                            _this.searchData[key] = searchData[key];
-                        }
                         _this.scrollToHistory(scrollY);
                         _this.loadingCancel();
                     }, 500);

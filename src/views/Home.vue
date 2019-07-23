@@ -454,7 +454,7 @@
     }
 
     .bodyContent .contentDetail .rowInline.dateRange {
-        width: 29.8%;
+        width: calc(33% - 33px);
     }
 
     .bodyContent .contentDetail .rowInline.buttonOperate {

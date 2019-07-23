@@ -266,21 +266,21 @@
                         label="督导结果">
                 </el-table-column>
                 <!--<el-table-column-->
-                        <!--v-if="buttonControl.checkShow || buttonControl.superviseShow"-->
-                        <!--fixed="right"-->
-                        <!--label="操作"-->
-                        <!--width="100">-->
-                    <!--<template slot-scope="scope">-->
-                        <!--<div v-if="buttonControl.checkShow"-->
-                             <!--class="tableButtons"-->
-                             <!--@click="checkOne(scope.row)"><i-->
-                                <!--class="icon iconfont iconweibiaoti&#45;&#45;5"></i>-->
-                            <!--<p>核查</p></div>-->
-                        <!--<div v-if="buttonControl.superviseShow" class="tableButtons"-->
-                             <!--@click="superviseOne(scope.row)"><i-->
-                                <!--class="icon iconfont iconweibiaoti&#45;&#45;6"></i>-->
-                            <!--<p>督导</p></div>-->
-                    <!--</template>-->
+                <!--v-if="buttonControl.checkShow || buttonControl.superviseShow"-->
+                <!--fixed="right"-->
+                <!--label="操作"-->
+                <!--width="100">-->
+                <!--<template slot-scope="scope">-->
+                <!--<div v-if="buttonControl.checkShow"-->
+                <!--class="tableButtons"-->
+                <!--@click="checkOne(scope.row)"><i-->
+                <!--class="icon iconfont iconweibiaoti&#45;&#45;5"></i>-->
+                <!--<p>核查</p></div>-->
+                <!--<div v-if="buttonControl.superviseShow" class="tableButtons"-->
+                <!--@click="superviseOne(scope.row)"><i-->
+                <!--class="icon iconfont iconweibiaoti&#45;&#45;6"></i>-->
+                <!--<p>督导</p></div>-->
+                <!--</template>-->
                 <!--</el-table-column>-->
             </el-table>
             <el-pagination
