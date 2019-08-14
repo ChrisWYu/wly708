@@ -167,7 +167,7 @@
         right: -2px;
         height: 32px;
         width: 32px;
-        top: -1px;
+        top: -2px;
         background-color: #F13D3D;
     }
 
@@ -177,11 +177,13 @@
     }
 
     #app .el-pagination .el-select .el-input {
-        width: 80px;
+        width: 85px;
     }
 
     #app .el-pagination .el-select .el-input .el-input__inner {
-        text-align: left;
+        text-align: center;
+        padding-right: 25px;
+        padding-left: 0;
     }
 
     /*.el-pagination .btn-prev .el-icon, .el-pagination .btn-next .el-icon {*/
@@ -198,7 +200,7 @@
         min-width: 24px;
         height: 24px;
         line-height: 24px;
-        margin-top: 2px;
+        margin-top: 4px;
         border-radius: 4px;
     }
 
@@ -230,12 +232,13 @@
 
     #app .el-pagination .routerTo .routerToButton {
         text-align: center;
+        font-weight: 500;
         cursor: pointer;
         display: inline-block;
         width: 28px;
         height: 28px;
         line-height: 28px;
-        font-size: 12px;
+        font-size: 14px;
         font-family: "PingFang SC";
         color: #ffffff;
         background-color: #F13D3D;
@@ -518,7 +521,10 @@
     /*cursor: pointer;*/
     /*}*/
 
-
+    .el-pagination  .btn-prev  .el-icon:before, .el-pagination .btn-next  .el-icon:before{
+        font-size: 21px;
+        font-weight: 100;
+    }
     .el-icon-arrow-up, .el-icon-date, .el-icon-arrow-left, .el-icon-arrow-right, .el-icon-close {
         font-family: "iconfont" !important;
     }

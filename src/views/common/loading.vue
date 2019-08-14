@@ -30,8 +30,5 @@
     }
 </script>
 <style>
-    .el-submenu .el-menu {
-        background-color: #fff !important;
-    }
 
 </style>

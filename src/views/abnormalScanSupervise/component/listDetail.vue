@@ -22,7 +22,7 @@
                 <!--</div>-->
                 <!--</div>-->
                 <div class="rowInline">
-                    <p class="title">异常大类</p>
+                    <p class="title">异常分类</p>
                     <el-select class="expandSelect" v-model="searchData.abnormalLargeCategory" placeholder="请选择"
                                :clearable="clearable" @change="getAbnormalSmallCategoryList">
                         <el-option
@@ -34,7 +34,7 @@
                     </el-select>
                 </div>
                 <div class="rowInline">
-                    <p class="title">异常明细</p>
+                    <p class="title">异常描述</p>
                     <el-select class="expandSelect" v-model="searchData.abnormalSmallCategory" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
@@ -284,7 +284,6 @@
                 <!--</el-table-column>-->
             </el-table>
             <el-pagination
-                    hide-on-single-page
                     @size-change="handleSizeChange"
                     @current-change="currentChange"
                     layout="total, sizes, prev, pager, next, slot"

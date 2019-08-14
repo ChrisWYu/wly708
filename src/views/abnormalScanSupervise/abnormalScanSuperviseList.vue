@@ -6,7 +6,7 @@
         <div class="contentDetail">
             <div class="row">
                 <div class="rowInline">
-                    <p class="title">经销商</p>
+                    <p class="title">码源经销商</p>
                     <el-input v-model="searchData.distributor" placeholder="请输入"></el-input>
                     <!-- <el-select class="expandSelect" v-model="searchData.distributor" placeholder="请选择"
                                :clearable="clearable">
@@ -25,7 +25,7 @@
                     </el-select>
                 </div>
                 <div class="rowInline">
-                    <p class="title">异常大类</p>
+                    <p class="title">异常分类</p>
                     <el-select class="expandSelect" v-model="searchData.abnormalLargeCategory" placeholder="请选择"
                                :clearable="clearable" @change="getAbnormalSmallCategoryList">
                         <el-option
@@ -37,7 +37,7 @@
                     </el-select>
                 </div>
                 <div class="rowInline">
-                    <p class="title">异常明细</p>
+                    <p class="title">异常描述</p>
                     <el-select class="expandSelect" v-model="searchData.abnormalSmallCategory" placeholder="请选择"
                                :clearable="clearable">
                         <el-option
@@ -95,7 +95,7 @@
             </div>
             <div class="row">
                 <div class="rowInline dateRange">
-                    <p class="title">创建日期</p>
+                    <p class="title">异常扫码日期</p>
                     <el-date-picker
                             class="expandDate"
                             v-model="searchData.createDate"
@@ -202,8 +202,8 @@
                 <el-table-column
                         show-overflow-tooltip
                         prop="distributor"
-                        label="经销商"
-                        width="140">
+                        label="码源经销商"
+                        width="280">
                     <template slot-scope="scope">
                         <div @click="handleClick(scope.row)"
                              class="tableRowTitle">
@@ -246,9 +246,9 @@
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
-                        width="120"
+                        width="140"
                         prop="createDate"
-                        label="创建日期">
+                        label="异常扫码日期">
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
@@ -270,6 +270,18 @@
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
+                        width="125"
+                        prop="warCharge"
+                        label="战区负责人">
+                </el-table-column>
+                <el-table-column
+                        show-overflow-tooltip
+                        width="125"
+                        prop="warOperator"
+                        label="战区执行人">
+                </el-table-column>
+                <el-table-column
+                        show-overflow-tooltip
                         width="115"
                         prop="checkStatus"
                         label="核查情况">
@@ -288,7 +300,6 @@
                 </el-table-column>
             </el-table>
             <el-pagination
-                    hide-on-single-page
                     @size-change="handleSizeChange"
                     @current-change="currentChange"
                     layout="total, sizes, prev, pager, next,slot"
@@ -632,7 +643,7 @@
             checkCheckBoxValue() {
                 let result = true;
                 if (this.checkDataId.length === 0) {
-                    this.$message({message: '请勾选需要分派的经销商', type: 'error'});
+                    this.$message({message: '请勾选需要分派的码源经销商', type: 'error'});
                     result = false;
                 }
                 return result;
@@ -698,7 +709,7 @@
                     return false;
                 }
                 require.ensure([], () => {
-                    const tHeader = ['经销商', '所属战区', '异常数', '创建日期', '核查战区', '分派时间', '截止时间', '核查情况', '督导负责人', '督导情况'];
+                    const tHeader = ['码源经销商', '所属战区', '异常数', '异常扫码日期', '核查战区', '分派时间', '截止时间', '核查情况', '督导负责人', '督导情况'];
                     const filterVal = ['distributor', 'warBelong', 'abnormalNum', 'createDate', 'warCheck', 'checkStartTime', 'checkEndTime', 'checkStatus', 'superviseCharge', 'superviseStatus'];
                     const list = this.checkData;
                     const data = this.formatJson(filterVal, list);
@@ -982,13 +993,13 @@
                             superviseStatus: this.searchUseData.superviseStatus,
                             //所属战区
                             warBelong: this.searchUseData.warBelong,
-                            //经销商
+                            //码源经销商
                             distributor: this.searchUseData.distributor,
                             //异常大类
                             abnormalLargeCategory: this.searchUseData.abnormalLargeCategory,
                             //异常小类
                             abnormalSmallCategory: this.searchUseData.abnormalSmallCategory,
-                            //创建日期
+                            //异常扫码日期
                             createDate: this.searchUseData.createDate,
                             //分派日期
                             checkStartTime: this.searchUseData.assignDate,

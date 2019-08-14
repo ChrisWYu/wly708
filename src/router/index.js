@@ -15,7 +15,7 @@ export default new Router({
     mode: 'history',
     routes: [
         {
-            path: 's',
+            path: '/',
             component: Home,
             name: 'supervisorCheckDataDetail',
             title: '督导稽核数据查看',

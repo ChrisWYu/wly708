@@ -8,7 +8,7 @@ Vue.use(Vuex)
 // 应用初始状态
 const state = {
     count: 10,
-    pageSizes: [10, 15, 20, 25],
+    pageSizes: [10, 15, 20, 25,100],
     abnormalScanSuperviseList: {
         pageSize: 10,
         currentPage: 1,
