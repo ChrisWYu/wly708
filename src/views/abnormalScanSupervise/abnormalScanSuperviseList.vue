@@ -708,13 +708,31 @@
                 if (!this.checkCheckBoxValue()) {
                     return false;
                 }
-                require.ensure([], () => {
-                    const tHeader = ['码源经销商', '所属战区', '异常数', '异常扫码日期', '核查战区', '分派时间', '截止时间', '核查情况', '督导负责人', '督导情况'];
-                    const filterVal = ['distributor', 'warBelong', 'abnormalNum', 'createDate', 'warCheck', 'checkStartTime', 'checkEndTime', 'checkStatus', 'superviseCharge', 'superviseStatus'];
-                    const list = this.checkData;
-                    const data = this.formatJson(filterVal, list);
-                    export_json_to_excel(tHeader, data, '异常扫码列表');
+                let data = {
+                    'checkData': this.checkData,
+                };
+                this.$http.post("/api/ddadapter/openApi/data", {
+                        "code": "00711ZI09",
+                        "data": data
+                    }, {
+                        headers: {
+                            'content-type': 'application/json',
+                        },
+                    }
+                ).then(res => {
+                    let way = Number(res.data.statusCode) === 200 ? 'success' : 'error';
+                    this.messagePrompt(way, res.data.message)
+                }, error => {
+                    this.loadingCancel();
+                    this.messagePrompt('error', '服务器错误！');
                 });
+                // require.ensure([], () => {
+                //     const tHeader = ['码源经销商', '所属战区', '异常数', '异常扫码日期', '核查战区', '分派时间', '截止时间', '核查情况', '督导负责人', '督导情况'];
+                //     const filterVal = ['distributor', 'warBelong', 'abnormalNum', 'createDate', 'warCheck', 'checkStartTime', 'checkEndTime', 'checkStatus', 'superviseCharge', 'superviseStatus'];
+                //     const list = this.checkData;
+                //     const data = this.formatJson(filterVal, list);
+                //     export_json_to_excel(tHeader, data, '异常扫码列表');
+                // });
             },
             changeOperator() {
                 if (!this.checkCheckBoxValue()) {

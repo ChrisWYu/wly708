@@ -47,6 +47,12 @@
                 </div>
             </div>
             <div class="row">
+                <div class="rowInline" style="vertical-align: top">
+                    <p class="title">异常扫码日期</p>
+                    <div class="searchLabel disabled has">
+                        {{createDate}}
+                    </div>
+                </div>
                 <div class="rowInline">
                     <p class="title">物流码</p>
                     <el-input
@@ -71,6 +77,8 @@
                         </el-option>
                     </el-select>
                 </div>
+            </div>
+            <div class="row">
                 <div class="rowInline">
                     <p class="title">是否核查</p>
                     <el-select class="expandSelect" v-model="searchData.isWarCheck" placeholder="请选择"
@@ -83,20 +91,6 @@
                         </el-option>
                     </el-select>
                 </div>
-                <!--<div class="rowInline">-->
-                <!--<p class="title">扫码出库渠道</p>-->
-                <!--<el-select class="expandSelect" v-model="searchData.scanOutChannel" placeholder="请选择"-->
-                <!--:clearable="clearable">-->
-                <!--<el-option-->
-                <!--v-for="item in scanOutChannelList"-->
-                <!--:key="item.id"-->
-                <!--:label="item.name"-->
-                <!--:value="item.id">-->
-                <!--</el-option>-->
-                <!--</el-select>-->
-                <!--</div>-->
-            </div>
-            <div class="row">
                 <div class="rowInline">
                     <p class="title">是否督导</p>
                     <el-select class="expandSelect" v-model="searchData.isSupervise" placeholder="请选择"
@@ -283,27 +277,27 @@
                 <!--</template>-->
                 <!--</el-table-column>-->
             </el-table>
-            <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="currentChange"
-                    layout="total, sizes, prev, pager, next, slot"
-                    :page-size="pageSize"
-                    :current-page="currentPage"
-                    :total="tableTotal"
-                    :page-sizes="pageSizes"
-            >
-                <div class="routerTo">
-                    <el-input
-                            class="expandInput routerToInput"
-                            v-model="routerToNum"
-                            @blur="blurRouterTo()"
-                    >
-                    </el-input>
-                    <div class="routerToButton" @click="handleRouterTo()">
-                        GO
-                    </div>
-                </div>
-            </el-pagination>
+            <!--<el-pagination-->
+                    <!--@size-change="handleSizeChange"-->
+                    <!--@current-change="currentChange"-->
+                    <!--layout="total, sizes, prev, pager, next, slot"-->
+                    <!--:page-size="pageSize"-->
+                    <!--:current-page="currentPage"-->
+                    <!--:total="tableTotal"-->
+                    <!--:page-sizes="pageSizes"-->
+            <!--&gt;-->
+                <!--<div class="routerTo">-->
+                    <!--<el-input-->
+                            <!--class="expandInput routerToInput"-->
+                            <!--v-model="routerToNum"-->
+                            <!--@blur="blurRouterTo()"-->
+                    <!--&gt;-->
+                    <!--</el-input>-->
+                    <!--<div class="routerToButton" @click="handleRouterTo()">-->
+                        <!--GO-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</el-pagination>-->
             <div class="row" style="text-align: center;">
                 <div class="cusButton cusWhite" @click="backTolast()" style="margin-right:20px;">返回</div>
 
@@ -343,6 +337,7 @@
             let operateRow = _this.$store.state['abnormalScanSuperviseList'].operateRow;
             this.operateRow = operateRow;
             this.codeSourceDistributor = operateRow.distributor;
+            this.createDate = operateRow.createDate;
             this.codeSourceWar = operateRow.warBelong;
             this.codeSourceChannel = operateRow.channelBelong;
             this.$http.all([this.getScanOutWarList(), this.getScanOutChannelList(), this.getDetailList()])
@@ -403,6 +398,7 @@
                 codeSourceDistributor: '',
                 codeSourceWar: '',
                 codeSourceChannel: '',
+                createDate: '',
                 abnormalSmallCategoryList: [],
                 isWarCheckList: [
                     {
@@ -655,13 +651,18 @@
                 });
             },
             getDetailList: function () {
+                let operateRow = this.$store.state['abnormalScanSuperviseList'].operateRow;
                 return this.$http.post("/api/ddadapter/openApi/data", {
                         "code": "00711ZI02",
                         "data": {
+                            // //当前页数
+                            // currentPage: this.currentPage,
+                            // //每页条数
+                            // pageSize: this.pageSize,
                             //当前页数
-                            currentPage: this.currentPage,
+                            currentPage: 1,
                             //每页条数
-                            pageSize: this.pageSize,
+                            pageSize: this.totalAbnormalStatusTotal(operateRow),
                             //物流码
                             logisticsCode: this.searchUseData.logisticsCode,
                             //异常大类
@@ -687,6 +688,9 @@
                         },
                     }
                 );
+            },
+            totalAbnormalStatusTotal(e) {
+                return e.codeA + e.codeB + e.codeC + e.codeD;
             },
             getListInfo() {
                 this.loadingShow();
