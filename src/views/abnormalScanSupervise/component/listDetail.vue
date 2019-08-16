@@ -4,9 +4,12 @@
             <div class="row">
                 <div class="rowInline" style="vertical-align: top">
                     <p class="title">码源经销商</p>
-                    <div class="searchLabel disabled has">
-                        {{codeSourceDistributor}}
-                    </div>
+                    <el-tooltip class="item" effect="dark" :content="codeSourceDistributor" placement="top-start">
+                        <div class="searchLabel disabled has" style="overflow: hidden;">
+                            {{codeSourceDistributor}}
+                        </div>
+                    </el-tooltip>
+
                 </div>
                 <div class="rowInline" style="vertical-align: top">
                     <p class="title">码源战区</p>
@@ -278,25 +281,25 @@
                 <!--</el-table-column>-->
             </el-table>
             <!--<el-pagination-->
-                    <!--@size-change="handleSizeChange"-->
-                    <!--@current-change="currentChange"-->
-                    <!--layout="total, sizes, prev, pager, next, slot"-->
-                    <!--:page-size="pageSize"-->
-                    <!--:current-page="currentPage"-->
-                    <!--:total="tableTotal"-->
-                    <!--:page-sizes="pageSizes"-->
+            <!--@size-change="handleSizeChange"-->
+            <!--@current-change="currentChange"-->
+            <!--layout="total, sizes, prev, pager, next, slot"-->
+            <!--:page-size="pageSize"-->
+            <!--:current-page="currentPage"-->
+            <!--:total="tableTotal"-->
+            <!--:page-sizes="pageSizes"-->
             <!--&gt;-->
-                <!--<div class="routerTo">-->
-                    <!--<el-input-->
-                            <!--class="expandInput routerToInput"-->
-                            <!--v-model="routerToNum"-->
-                            <!--@blur="blurRouterTo()"-->
-                    <!--&gt;-->
-                    <!--</el-input>-->
-                    <!--<div class="routerToButton" @click="handleRouterTo()">-->
-                        <!--GO-->
-                    <!--</div>-->
-                <!--</div>-->
+            <!--<div class="routerTo">-->
+            <!--<el-input-->
+            <!--class="expandInput routerToInput"-->
+            <!--v-model="routerToNum"-->
+            <!--@blur="blurRouterTo()"-->
+            <!--&gt;-->
+            <!--</el-input>-->
+            <!--<div class="routerToButton" @click="handleRouterTo()">-->
+            <!--GO-->
+            <!--</div>-->
+            <!--</div>-->
             <!--</el-pagination>-->
             <div class="row" style="text-align: center;">
                 <div class="cusButton cusWhite" @click="backTolast()" style="margin-right:20px;">返回</div>
