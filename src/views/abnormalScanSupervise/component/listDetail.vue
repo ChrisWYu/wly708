@@ -240,9 +240,15 @@
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
-                        width="165"
-                        prop="warCheckResult"
+                        width="185"
+                        prop="warCheckMsg"
                         label="战区核查结果">
+                </el-table-column>
+                <el-table-column
+                        show-overflow-tooltip
+                        width="170"
+                        prop="warCheckDeal"
+                        label="战区核查处理结果">
                 </el-table-column>
                 <el-table-column
                         show-overflow-tooltip
@@ -259,8 +265,14 @@
                 <el-table-column
                         show-overflow-tooltip
                         width="125"
-                        prop="superviseResult"
+                        prop="superviseMsg"
                         label="督导结果">
+                </el-table-column>
+                <el-table-column
+                        show-overflow-tooltip
+                        width="150"
+                        prop="superviseDeal"
+                        label="督导处理结果">
                 </el-table-column>
                 <!--<el-table-column-->
                 <!--v-if="buttonControl.checkShow || buttonControl.superviseShow"-->

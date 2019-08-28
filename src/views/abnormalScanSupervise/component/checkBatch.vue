@@ -31,7 +31,7 @@
             </el-select>
             <div class="row" style="margin-top: 10px;">其他核查结果描述</div>
             <el-input style="margin-top: 5px;" class="expandTextarea" type="textarea" v-model="checkResultDescribe"
-                      placeholder="请输入"></el-input>
+                      placeholder="请输入" :disabled="checkResult != '4'"></el-input>
             <div class="row" style="margin-top: 10px;">处理结果</div>
             <el-select style="margin-top: 5px;" class="expandSelect" v-model="handleResult" placeholder="请选择"
                        :clearable=true>
@@ -156,6 +156,8 @@
                 if (this.checkResult === '4' && this.checkResultDescribe === '') {
                     this.messagePrompt('warning', '其他核查结果描述不能为空！');
                     return;
+                } else {
+                    this.checkResultDescribe = '';
                 }
                 if (this.handleResult === '') {
                     this.messagePrompt('warning', '处理结果不能为空！');
@@ -167,8 +169,8 @@
                 }
                 let data = {
                     'checkResult': this.checkResult,
-                    'dealResult': this.checkResultDescribe,
-                    'checkOther': this.handleResult,
+                    'dealResult': this.handleResult,
+                    'checkOther': this.checkResultDescribe,
                     'dealOther': this.handleResultDescribe,
                     'datetime': this.date,
                     'codeIds': this.checkDataId

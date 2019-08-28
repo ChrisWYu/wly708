@@ -300,6 +300,10 @@
         background: rgba(39, 45, 51, 0.7);
     }
 
+    #app .el-range-editor.is-active {
+        border-color: #F13D3D !important
+    }
+
 
     /** 公用样式定义 */
     .row .operateButton {
@@ -521,10 +525,11 @@
     /*cursor: pointer;*/
     /*}*/
 
-    .el-pagination  .btn-prev  .el-icon:before, .el-pagination .btn-next  .el-icon:before{
+    .el-pagination .btn-prev .el-icon:before, .el-pagination .btn-next .el-icon:before {
         font-size: 21px;
         font-weight: 100;
     }
+
     .el-icon-arrow-up, .el-icon-date, .el-icon-arrow-left, .el-icon-arrow-right, .el-icon-close {
         font-family: "iconfont" !important;
     }
